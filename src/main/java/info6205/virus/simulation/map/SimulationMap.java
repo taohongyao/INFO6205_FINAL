@@ -8,6 +8,8 @@ public class SimulationMap {
     private double high;
     private int divEveryMeter;
     private List<List<GridElement>> grids;
+    private Road road;
+
 
     public SimulationMap(double width, double high) {
         this.width = width;
@@ -42,5 +44,37 @@ public class SimulationMap {
             grids.set(y,list);
         }
         return subGrids;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getHigh() {
+        return high;
+    }
+
+    public void setHigh(double high) {
+        this.high = high;
+    }
+
+    public int getDivEveryMeter() {
+        return divEveryMeter;
+    }
+
+    public void setDivEveryMeter(int divEveryMeter) {
+        this.divEveryMeter = divEveryMeter;
+    }
+
+    public Road getRoad() {
+        return road;
+    }
+
+    public void setRoad(Road road) {
+        this.road = road;
     }
 }

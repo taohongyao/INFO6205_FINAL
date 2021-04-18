@@ -4,6 +4,7 @@ import info6205.virus.simulation.map.GridElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AreaBase {
@@ -69,5 +70,18 @@ public class AreaBase {
 
     public void setRightDownY(double rightDownY) {
         this.rightDownY = rightDownY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AreaBase areaBase = (AreaBase) o;
+        return Objects.equals(id, areaBase.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
