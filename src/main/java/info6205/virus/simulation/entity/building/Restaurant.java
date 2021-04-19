@@ -11,7 +11,7 @@ public class Restaurant extends BuildingBase {
         super(leftUpX, leftUpY, leftUpX+high, leftUpY-with, map,direction,roadWidth);
     }
 
-    public Restaurant(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {
-        super(leftUpX, leftUpY, rightDownX, rightDownY, map,direction,width);
-    }
+//    public Restaurant(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {
+//        super(leftUpX, leftUpY, rightDownX, rightDownY, map,direction,width);
+//    }
 }

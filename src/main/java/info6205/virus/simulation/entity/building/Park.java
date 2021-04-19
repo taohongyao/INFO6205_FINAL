@@ -9,7 +9,7 @@ public class Park extends BuildingBase {
     public Park(double leftUpX, double leftUpY, double high, double with, double roadWidth, SimulationMap map, Direction direction) {
         super(leftUpX, leftUpY, leftUpX+high, leftUpY-with, map,direction,roadWidth);
     }
-    public Park(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {
-        super(leftUpX, leftUpY, rightDownX, rightDownY, map,direction,width);
-    }
+//    public Park(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {
+//        super(leftUpX, leftUpY, rightDownX, rightDownY, map,direction,width);
+//    }
 }

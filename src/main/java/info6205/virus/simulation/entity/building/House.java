@@ -10,7 +10,7 @@ public class House extends BuildingBase {
         super(leftUpX, leftUpY, leftUpX+high, leftUpY-width, map,direction,roadWidth);
     }
 
-    public House(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {
-        super(leftUpX, leftUpY, rightDownX, rightDownY, map,direction,width);
-    }
+//    public House(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {
+//        super(leftUpX, leftUpY, rightDownX, rightDownY, map,direction,width);
+//    }
 }
