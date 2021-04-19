@@ -4,10 +4,7 @@ import info6205.virus.simulation.entity.AreaBase;
 import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.entity.VirusBase;
 import info6205.virus.simulation.executor.ExecutorBase;
-import info6205.virus.simulation.manager.AreaManger;
-import info6205.virus.simulation.manager.EntityGenerator;
-import info6205.virus.simulation.manager.PeopleManger;
-import info6205.virus.simulation.manager.VirusManager;
+import info6205.virus.simulation.manager.*;
 import info6205.virus.simulation.map.SimulationMap;
 
 import java.util.ArrayList;
@@ -34,20 +31,20 @@ public class SimulationApplication {
         executorBaseList=new ArrayList<>();
         map=new SimulationMap(mapWidth,mapHigh);
 
-        EntityGenerator entityGenerator=null;
+        EntityGenerator entityGenerator=new DemoGenerator(map);
         areaManger=new AreaManger();
         peopleManger=new PeopleManger();
         virusManager=new VirusManager();
 
         List<AreaBase> buildings=entityGenerator.generateBuilding();
-        List<PeopleBase> people=entityGenerator.generatePeople(buildings);
-        List<VirusBase> virus=entityGenerator.generateVirus(people);
+//        List<PeopleBase> people=entityGenerator.generatePeople(buildings);
+//        List<VirusBase> virus=entityGenerator.generateVirus(people);
 
         areaManger.addAreas(buildings);
-        peopleManger.addPeople(people);
-        virusManager.addVirus(virus);
-        executorBaseList.add(peopleManger.createExecutor());
-        executorBaseList.add(virusManager.createExecutor());
+//        peopleManger.addPeople(people);
+//        virusManager.addVirus(virus);
+//        executorBaseList.add(peopleManger.createExecutor());
+//        executorBaseList.add(virusManager.createExecutor());
     }
 
     public void run(){
@@ -73,8 +70,24 @@ public class SimulationApplication {
         }
     }
 
+    public AreaManger getAreaManger() {
+        return areaManger;
+    }
+
+    public PeopleManger getPeopleManger() {
+        return peopleManger;
+    }
+
+    public VirusManager getVirusManager() {
+        return virusManager;
+    }
+
+    public SimulationMap getMap() {
+        return map;
+    }
+
     public static void main(String[] args){
-        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,1000,1000);
+        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,70,50);
         simulationApplication.run();
     }
 

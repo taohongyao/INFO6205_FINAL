@@ -21,6 +21,7 @@ public class RoadArea extends AreaBase{
     public RoadArea(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map) {
         super(leftUpX, leftUpY, rightDownX, rightDownY,map);
         adjacentRoad=new HashSet<>();
+        gridElementsInitial(getArea());
     }
 
     @Override

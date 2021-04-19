@@ -7,8 +7,8 @@ import info6205.virus.simulation.map.SimulationMap;
 public class Restaurant extends BuildingBase {
 
 
-    public Restaurant(double leftUpX, double leftUpY, double high, double with, double roadWidth, SimulationMap map, Direction direction) {
-        super(leftUpX, leftUpY, leftUpX+high, leftUpY-with, map,direction,roadWidth);
+    public Restaurant(double leftUpX, double leftUpY, double high, double width, double roadWidth, SimulationMap map, Direction direction) {
+        super(leftUpX, leftUpY, leftUpX+width, leftUpY-high, map,direction,roadWidth);
     }
 
 //    public Restaurant(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction, double width) {

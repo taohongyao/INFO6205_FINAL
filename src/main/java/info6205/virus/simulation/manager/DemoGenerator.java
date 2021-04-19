@@ -6,11 +6,15 @@ import info6205.virus.simulation.map.SimulationMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DemoGenerator extends EntityGenerator{
     public DemoGenerator(SimulationMap map) {
         super(map);
     }
+
+    private static Logger logger=Logger.getLogger(DemoGenerator.class.getName());
 
     @Override
     public List<AreaBase> generateBuilding() {
@@ -96,17 +100,16 @@ public class DemoGenerator extends EntityGenerator{
              }
         }
 
-
-
         //House generate
         List<House> houses=new ArrayList<>();
         int i=0;
         for (RoadArea roadArea:list){
             if(i%2==0){
-                int high=5;
-                int width=10;
-              //  int roadWidth=1;
-                House house=new House(roadArea.getLeftUpX(),roadArea.getLeftUpY(),high,width,roadWidth,map, Direction.SOUTH);
+                int high=2;
+                int width=4;
+                roadWidth=1;
+                logger.log(Level.INFO,"Generate House:"+i);
+                House house=new House(roadArea.getLeftUpX(),roadArea.getLeftUpY()+high,high,width,roadWidth,map, Direction.SOUTH);
                 roadArea.linkBuilding(house);
                 houses.add(house);
                 house=new House(roadArea.getLeftUpX(),roadArea.getRightDownY(),high,width,roadWidth,map, Direction.NORTH);
@@ -154,7 +157,17 @@ public class DemoGenerator extends EntityGenerator{
         List<Mall> mall = new ArrayList<>();
         Mall mall1 = new Mall(40, 18, 10, 20,1, map,Direction.NORTH);
 
-        return null;
+
+        List<AreaBase> output=new ArrayList<>();
+        output.addAll(list);
+        output.addAll(houses);
+        output.addAll(office);
+        output.addAll(park);
+        output.addAll(school);
+        output.addAll(restaurant);
+        output.addAll(mall);
+
+        return output;
     }
 
     @Override

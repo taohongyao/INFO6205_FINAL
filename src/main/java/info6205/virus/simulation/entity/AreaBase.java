@@ -25,7 +25,6 @@ public abstract class AreaBase {
         this.map=map;
         area= map.getSubGridsAndBindArea(leftUpX,leftUpY,rightDownX,rightDownY,this);
         id= UUID.randomUUID().toString();
-        gridElementsInitial(area);
         random= new Random();
     }
 
@@ -40,6 +39,13 @@ public abstract class AreaBase {
             e.printStackTrace();
         }
         return element;
+    }
+
+    public double getWidth(){
+        return rightDownX-leftUpX;
+    }
+    public double getHight(){
+        return leftUpY-rightDownY;
     }
 
     public String getId() {
