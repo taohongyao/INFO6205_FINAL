@@ -22,4 +22,22 @@
         <maven.compiler.target>13</maven.compiler.target>
     </properties>
 
+    <build>
+        <finalName>VirusSimulation</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>info6205.virus.simulation.console.SimulationApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
