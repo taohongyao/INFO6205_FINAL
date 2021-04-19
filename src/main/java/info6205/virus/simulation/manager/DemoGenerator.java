@@ -17,17 +17,86 @@ public class DemoGenerator extends EntityGenerator{
         // Road generate
         List<RoadArea> list=new ArrayList<>();
         for(int i=0;i<16;i++){
-            int xLU=0;
+            int xLU=0; //road 1
             int yLU=4;
             int roadWidth=2;
             int xRD=xLU+roadWidth;
             int yRD=yLU-roadWidth;
-            RoadArea newRoad1=new RoadArea(xLU+i*roadWidth,yLU,xRD+i*roadWidth,yRD,map);
+            RoadArea newRoad1=new RoadArea(xLU+i*roadWidth,yLU,xRD-i*roadWidth*2,yRD,map); //(0,4)->(2,0)
             list.add(newRoad1);
             if(i!=0){
                 newRoad1.linkRodaArea(list.get(i-1));
             }
+
+        for(int j=0;j<16;j++){
+            int xLU1=0;//road2
+            int yLU1=32;
+             /*
+             int roadWidth2=2;
+             int xRD1=xLU1+roadWidth;
+             int yRD1=yLU1-roadWidth;
+             */
+            RoadArea newRoad2=new RoadArea(xLU1+i*roadWidth,yLU1,xRD-i*roadWidth*2,yRD,map); //(0,32)->(2,28)
+             list.add(newRoad2);
+             if(i!=0){
+                 newRoad2.linkRodaArea(list.get(i-1));
+             }
+
+        for(int k=0;k<4;k++){
+             int xLU2=6; //road3
+             int yLU2=40;
+             //int roadWidth2=2;
+             //int xRD2=xLU2+roadWidth;
+             //int yRD2=yLU2-roadWidth;
+             RoadArea newRoad3=new RoadArea(xLU2+i*roadWidth*2,yLU2,xRD-i*roadWidth,yRD,map); //(6,40)->(10,38)
+             list.add(newRoad3);
+             if(i!=0){
+                 newRoad3.linkRodaArea(list.get(i-1));
+             }
+
+
+        for(int l=0;l<4;l++){
+            int xLU3=40;//road4
+            int yLU3=32;
+                //int roadWidth2=2;
+                //int xRD2=xLU2+roadWidth;
+                //int yRD2=yLU2-roadWidth;
+            RoadArea newRoad4=new RoadArea(xLU3+i*roadWidth,yLU3,xRD-i*roadWidth*2,yRD,map); //(40,32)->(42,28)
+            list.add(newRoad4);
+            if(i!=0){
+                newRoad4.linkRodaArea(list.get(i-1));
+            }
+
+        for(int m=0;m<4;m++){
+             int xLU5=40;//road5
+             int yLU5=22;
+             RoadArea newRoad5=new RoadArea(xLU5+i*roadWidth,yLU5,xRD-i*roadWidth*2,yRD,map); //(40,22)->(42,18)
+             list.add(newRoad5);
+             if(i!=0){
+                newRoad5.linkRodaArea(list.get(i-1));
+             }
+
+        for(int n=0;n<4;n++){
+             int xLU6=40;//road6
+             int yLU6=8;
+             RoadArea newRoad6=new RoadArea(xLU6+i*roadWidth,yLU6,xRD-i*roadWidth*2,yRD,map); //(40,8)->(42,4)
+             list.add(newRoad6);
+             if(i!=0){
+                 newRoad6.linkRodaArea(list.get(i-1));
+             }
+
+        for(int o=0;o<4;o++){
+             int xLU7=32; //road7
+             int yLU7=40;
+            int roadWidth2=4;
+             RoadArea newRoad7=new RoadArea(xLU7+i*roadWidth*2,yLU7,xRD-i*roadWidth*0.5,yRD,map); //(32,40)->(40,38)
+             list.add(newRoad7);
+             if(i!=0){
+                newRoad7.linkRodaArea(list.get(i-1));
+             }
         }
+
+
 
         //House generate
         List<House> houses=new ArrayList<>();
@@ -36,7 +105,7 @@ public class DemoGenerator extends EntityGenerator{
             if(i%2==0){
                 int high=5;
                 int width=10;
-                int roadWidth=1;
+              //  int roadWidth=1;
                 House house=new House(roadArea.getLeftUpX(),roadArea.getLeftUpY(),high,width,roadWidth,map, Direction.SOUTH);
                 roadArea.linkBuilding(house);
                 houses.add(house);
