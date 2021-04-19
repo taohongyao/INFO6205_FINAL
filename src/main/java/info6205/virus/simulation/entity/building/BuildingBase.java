@@ -87,6 +87,19 @@ public class BuildingBase extends AreaBase {
     }
 
 
+    public double getPrivateWallWidth(){
+        return rightDownXBuildingWall-leftUpXBuildingWall;
+    }
+    public double getPrivateWallHigh(){
+        return leftUpYBuildingWall-rightDownYBuildingWall;
+    }
+
+    public double getPublicRoadWidth(){
+        return rightDownXPublicArea-leftUpXPublicArea;
+    }
+    public double getPublicRoadHigh(){
+        return leftUpYPublicArea-rightDownYPublicArea;
+    }
 
     public double getPublicAreaWidth() {
         return publicAreaWidth;

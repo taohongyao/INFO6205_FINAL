@@ -42,6 +42,13 @@ public abstract class AreaBase {
         return element;
     }
 
+    public double getWidth(){
+        return rightDownX-leftUpX;
+    }
+    public double getHight(){
+        return leftUpY-rightDownY;
+    }
+
     public String getId() {
         return id;
     }

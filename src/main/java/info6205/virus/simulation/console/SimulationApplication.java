@@ -40,14 +40,14 @@ public class SimulationApplication {
         virusManager=new VirusManager();
 
         List<AreaBase> buildings=entityGenerator.generateBuilding();
-        List<PeopleBase> people=entityGenerator.generatePeople(buildings);
-        List<VirusBase> virus=entityGenerator.generateVirus(people);
+//        List<PeopleBase> people=entityGenerator.generatePeople(buildings);
+//        List<VirusBase> virus=entityGenerator.generateVirus(people);
 
         areaManger.addAreas(buildings);
-        peopleManger.addPeople(people);
-        virusManager.addVirus(virus);
-        executorBaseList.add(peopleManger.createExecutor());
-        executorBaseList.add(virusManager.createExecutor());
+//        peopleManger.addPeople(people);
+//        virusManager.addVirus(virus);
+//        executorBaseList.add(peopleManger.createExecutor());
+//        executorBaseList.add(virusManager.createExecutor());
     }
 
     public void run(){
@@ -71,6 +71,22 @@ public class SimulationApplication {
                 //render windows
             }
         }
+    }
+
+    public AreaManger getAreaManger() {
+        return areaManger;
+    }
+
+    public PeopleManger getPeopleManger() {
+        return peopleManger;
+    }
+
+    public VirusManager getVirusManager() {
+        return virusManager;
+    }
+
+    public SimulationMap getMap() {
+        return map;
     }
 
     public static void main(String[] args){

@@ -4,6 +4,8 @@ import info6205.virus.simulation.entity.AreaBase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SimulationMap {
     private double width;
@@ -13,6 +15,7 @@ public class SimulationMap {
     private Road road;
 
 
+    private static Logger logger=Logger.getLogger(SimulationMap.class.getName());
     public SimulationMap(double width, double high) {
         this.width = width;
         this.high = high;
@@ -25,6 +28,7 @@ public class SimulationMap {
             }
             grids.add(list);
         }
+        logger.log(Level.INFO,String.join(" ","High:",""+grids.size(),"Width:",""+grids.get(0).size()));
     }
 
     public GridElement getGridElimentByXY(double x,double y) throws Exception {
@@ -41,9 +45,10 @@ public class SimulationMap {
         for(int y=yRightDownInt;y<yLeftUpInt;y++){
             List<GridElement> list=new ArrayList<>();
             for(int x=xLeftUpInt;x<xRightDownInt;x++){
-                list.set(x,grids.get(y).get(x));
+                GridElement element=grids.get(y).get(x);
+                list.add(element);
             }
-            grids.set(y,list);
+            subGrids.add(list);
         }
         return subGrids;
     }
@@ -59,9 +64,9 @@ public class SimulationMap {
             for(int x=xLeftUpInt;x<xRightDownInt;x++){
                 GridElement element=grids.get(y).get(x);
                 element.bindArea(areaBase);
-                list.set(x,element);
+                list.add(element);
             }
-            grids.set(y,list);
+            subGrids.add(list);
         }
         return subGrids;
     }
