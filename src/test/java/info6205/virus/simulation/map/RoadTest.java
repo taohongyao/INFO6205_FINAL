@@ -9,12 +9,13 @@ class RoadTest {
 
     @Test
     void findPath() {
-        RoadArea roadArea=new RoadArea(1,2,2,1);
-        RoadArea roadArea2=new RoadArea(0,2,1,1);
-        RoadArea roadArea3=new RoadArea(2,2,3,1);
-        RoadArea roadArea4=new RoadArea(1,3,2,2);
-        RoadArea roadArea5=new RoadArea(2,3,3,2);
-        RoadArea roadArea6=new RoadArea(3,3,4,2);
+        SimulationMap map=new SimulationMap(10,10);
+        RoadArea roadArea=new RoadArea(1,2,2,1,map);
+        RoadArea roadArea2=new RoadArea(0,2,1,1,map);
+        RoadArea roadArea3=new RoadArea(2,2,3,1,map);
+        RoadArea roadArea4=new RoadArea(1,3,2,2,map);
+        RoadArea roadArea5=new RoadArea(2,3,3,2,map);
+        RoadArea roadArea6=new RoadArea(3,3,4,2,map);
         roadArea.linkRodaArea(roadArea2).linkRodaArea(roadArea3).linkRodaArea(roadArea4);
         roadArea3.linkRodaArea(roadArea5);
         roadArea4.linkRodaArea(roadArea5);

@@ -2,7 +2,7 @@ package info6205.virus.simulation.entity;
 
 import java.util.UUID;
 
-public class MaskBase {
+public abstract class MaskBase {
     protected String id;
     protected boolean usage;
     protected double effective;

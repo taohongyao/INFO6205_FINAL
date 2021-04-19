@@ -1,39 +1,66 @@
 package info6205.virus.simulation.entity;
 
 import info6205.virus.simulation.map.GridElement;
+import info6205.virus.simulation.map.SimulationMap;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-public class AreaBase {
+public abstract class AreaBase {
     protected String id;
     protected List<List<GridElement>> area;
+    protected SimulationMap map;
     protected double leftUpX;
     protected double leftUpY;
     protected double rightDownX;
     protected double rightDownY;
+    protected static Random random;
 
-    public AreaBase(double leftUpX, double leftUpY, double rightDownX, double rightDownY) {
+    public abstract void gridElementsInitial(List<List<GridElement>> area);
+
+    public AreaBase(double leftUpX, double leftUpY, double rightDownX, double rightDownY,SimulationMap map) {
         this.leftUpX = leftUpX;
         this.leftUpY = leftUpY;
         this.rightDownX = rightDownX;
         this.rightDownY = rightDownY;
-        area=new ArrayList<>();
+        this.map=map;
+        area= map.getSubGridsAndBindArea(leftUpX,leftUpY,rightDownX,rightDownY,this);
         id= UUID.randomUUID().toString();
+        gridElementsInitial(area);
+        random= new Random();
+    }
+
+    public abstract GridElement getRandomWalkableGridElement();
+    public GridElement getRandomGridElement(){
+        double x=random.nextDouble()*(rightDownX-leftUpX)+leftUpX;
+        double y=random.nextDouble()*(leftUpY-rightDownY)+rightDownY;
+        GridElement element=null;
+        try {
+            element=map.getGridElimentByXY(x,y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return element;
     }
 
     public String getId() {
         return id;
     }
 
+    public double getCenterX(){
+        return (leftUpX+rightDownX)/2;
+    }
+
+    public double getCenterY(){
+        return (leftUpY+rightDownY)/2;
+    }
+
+
     public void setId(String id) {
         this.id = id;
     }
 
     public List<List<GridElement>> getArea() {
-        return new ArrayList<>(area);
+        return area;
     }
 
     public void setArea(List<List<GridElement>> area) {

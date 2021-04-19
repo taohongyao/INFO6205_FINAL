@@ -1,16 +1,20 @@
 package info6205.virus.simulation.entity;
 
 import info6205.virus.simulation.map.GridElement;
+import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.task.TaskBase;
 
 import java.util.*;
 
-public class PeopleBase {
+public abstract class PeopleBase {
     protected String id;
     protected GridElement location;
+    protected double x;
+    protected double y;
     protected List<VirusBase> virus;
     protected MaskBase maskBase;
     protected Queue<TaskBase> tasks;
+    protected SimulationMap map;
 
     public PeopleBase() {
         id= UUID.randomUUID().toString();
@@ -18,6 +22,34 @@ public class PeopleBase {
         tasks=new LinkedList<>();
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public RoadArea getCurrentRoadArea(){
+        for (AreaBase base:getLocation().getAreas()){
+            if(base instanceof RoadArea){
+                return (RoadArea) base;
+            }
+        }
+        return null;
+    }
+
+    public SimulationMap getMap() {
+        return map;
+    }
 
     //  Mask Operation-------------------
     public MaskBase getMaskBase() {
@@ -37,8 +69,15 @@ public class PeopleBase {
         virus.add(base);
     }
 
-    public void cleanVirus(){
-        virus.clear();
+    protected void removeVirus(VirusBase base){
+        int i=0;
+        for (VirusBase virusBase:virus){
+            if(virusBase.getId().equals(base.getId())){
+                virus.remove(i);
+                return;
+            }
+            i++;
+        }
     }
 
     //  Location operation--------------
@@ -54,8 +93,21 @@ public class PeopleBase {
         this.id = id;
     }
 
-    public void setLocation(GridElement location) {
+    private void setLocation(double x, double y) throws Exception {
+        setX(x);
+        setY(y);
+        GridElement location = map.getGridElimentByXY(x,y);
         this.location = location;
+        location.addPeople(this);
+    }
+
+    // Move to next location
+    public void moveToNextLocation(double x, double y) throws Exception {
+        GridElement currentLocation=getLocation();
+        if(currentLocation!=null){
+            currentLocation.removePeople(this);
+        }
+        setLocation(x,y);
     }
 
     //   Task Operation--------------------
@@ -77,5 +129,18 @@ public class PeopleBase {
 
     public void FinishCurrentTask(){
         tasks.remove();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PeopleBase that = (PeopleBase) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
