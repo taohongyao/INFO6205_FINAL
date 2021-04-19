@@ -54,6 +54,7 @@ public class SimulationMap {
     }
 
     public List<List<GridElement>> getSubGridsAndBindArea(double xLeftUp, double yLeftUp, double xRightDown, double yRightDown, AreaBase areaBase){
+        logger.info(String.join(" ","xLU:"+xLeftUp,", yLU:"+yLeftUp,", xRD:"+xRightDown,", yRightDown"+yRightDown));
         List<List<GridElement>> subGrids=new ArrayList<>();
         int xLeftUpInt=(int)Math.round(xLeftUp*divEveryMeter);
         int yLeftUpInt=(int)Math.round(yLeftUp*divEveryMeter);
@@ -68,6 +69,7 @@ public class SimulationMap {
             }
             subGrids.add(list);
         }
+        logger.log(Level.INFO,"SubGrides size: "+subGrids.size());
         return subGrids;
     }
 

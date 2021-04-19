@@ -28,7 +28,6 @@ public class SimulationApplicationWindows {
 
     public SimulationApplicationWindows(SimulationApplication simulationApplication) {
         this.simulationApplication = simulationApplication;
-        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), 0, simulationApplication.getMap().getHigh(), 0.05);
         JFrame jFrame = new JFrame("VirusSimulation");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jFrame.getContentPane().add(mainPanel);
@@ -36,6 +35,7 @@ public class SimulationApplicationWindows {
         jFrame.setVisible(true);
         jFrame.setLocation(dim.width / 2 - jFrame.getSize().width / 2, dim.height / 2 - jFrame.getSize().height / 2);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), 0, simulationApplication.getMap().getHigh(), 0.078);
         logger.log(Level.INFO, "Start render.");
 
     }
@@ -70,12 +70,12 @@ public class SimulationApplicationWindows {
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout(0, 0));
-        mainPanel.setMinimumSize(new Dimension(1000, 450));
-        mainPanel.setPreferredSize(new Dimension(1000, 450));
+        mainPanel.setMinimumSize(new Dimension(1000, 750));
+        mainPanel.setPreferredSize(new Dimension(1000, 750));
         canvas = new JPanel();
         canvas.setLayout(new BorderLayout(0, 0));
-        canvas.setMinimumSize(new Dimension(1000, 400));
-        canvas.setPreferredSize(new Dimension(1000, 400));
+        canvas.setMinimumSize(new Dimension(1000, 700));
+        canvas.setPreferredSize(new Dimension(1000, 700));
         mainPanel.add(canvas, BorderLayout.NORTH);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());

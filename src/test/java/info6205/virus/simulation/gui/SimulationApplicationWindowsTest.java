@@ -13,7 +13,7 @@ import java.util.List;
 class SimulationApplicationWindowsTest {
 
     public static void main(String [] args){
-        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,1000,1000);
+        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,70,50);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication);
         JPanel canvas=windows.getCanvas();
         SimulationMap map=new SimulationMap(10,10);
@@ -36,13 +36,28 @@ class SimulationApplicationWindowsTest {
         list.add(roadArea6);
 
         SimulationRender simulationRender=new SimulationRender(canvas.getHeight(),canvas.getWidth(),0,map.getHigh(),0.05);
-        simulationRender.renderAreaBase(list,canvas.getGraphics());
+        while (true){
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            simulationRender.renderAreaBase(list,canvas.getGraphics());
+        }
     }
 
     @Test
     public void renderTest(){
-        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,1000,1000);
+        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,70,50);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication);
+        while (true){
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            windows.render();
+        }
     }
 
 

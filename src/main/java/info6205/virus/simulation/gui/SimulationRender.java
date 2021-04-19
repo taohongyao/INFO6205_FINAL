@@ -41,7 +41,7 @@ public class SimulationRender {
             }else if(areaBase instanceof BuildingBase){
                 renderBuilding((BuildingBase) areaBase,g);
             }else {
-
+                logger.log(Level.INFO,"Nothing to render.");
             }
         }else {
             logger.log(Level.INFO,"Out of render scope.");
@@ -60,14 +60,14 @@ public class SimulationRender {
 
 
     private int convert2CanvasX(double xRealWorld){
-        return (int) ((xRealWorld-xLeftTopRealWorld)/zoom);
+        return (int) (((xRealWorld-xLeftTopRealWorld)/zoom)+1);
     }
     private int convert2CanvasY(double yRealWorld){
-        return (int) ((yLeftTopRealWorld-yRealWorld)/zoom);
+        return (int) (((yLeftTopRealWorld-yRealWorld)/zoom)+1);
     }
 
     private int convert2CanvasLength(double lengthRealWorld){
-        return (int) (lengthRealWorld/zoom);
+        return (int) ((lengthRealWorld/zoom)+1);
     }
 
     private void renderRoad(RoadArea roadArea, Graphics g){
@@ -91,16 +91,17 @@ public class SimulationRender {
 
         //Draw public building area (Road)
         int xPublicRoadLU=convert2CanvasX(buildingBase.getLeftUpXPublicArea());
-        int yPublicRoadLU=convert2CanvasX(buildingBase.getLeftUpYPublicArea());
+        int yPublicRoadLU=convert2CanvasY(buildingBase.getLeftUpYPublicArea());
         int roadWidth=convert2CanvasLength(buildingBase.getPublicRoadWidth());
         int roadHight=convert2CanvasLength(buildingBase.getPublicRoadHigh());
 
 
         //Draw private building area
         int xPrivateBuildingArea=convert2CanvasX(buildingBase.getLeftUpXBuildingWall());
-        int yPrivateBuildingArea=convert2CanvasX(buildingBase.getLeftUpYBuildingWall());
+        int yPrivateBuildingArea=convert2CanvasY(buildingBase.getLeftUpYBuildingWall());
         int privateWidth=convert2CanvasLength(buildingBase.getPrivateWallWidth());
         int privateHigh=convert2CanvasLength(buildingBase.getPrivateWallHigh());
+
 
         if (buildingBase instanceof House){
             renderHouse(x,y,width,high,xPublicRoadLU,yPublicRoadLU,roadWidth,roadHight,xPrivateBuildingArea,yPrivateBuildingArea,privateWidth,privateHigh,g);
@@ -121,14 +122,19 @@ public class SimulationRender {
         }
     }
 
+    private void renderStringWithinBuilding(int x,int y,int High, String string,Graphics g){
+        g.drawString(string,x,y);
+    }
+
     private void renderHouse(int x,int y,int buildingWidth,int buildingHigh,
                              int xBuildingRoad,int yBuildingRoad,int roadWidth,int roadHigh,
                              int xBuildingPrivate,int yBuildingPriavte,int buildingPrivateWidth,int buildingPrivateHigh,
                              Graphics g){
+
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(149, 117, 205));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -136,7 +142,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(69, 39, 160));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
-
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"House",g);
     }
 
     private void renderHospital(int x,int y,int buildingWidth,int buildingHigh,
@@ -146,7 +152,7 @@ public class SimulationRender {
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(233, 30, 99));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -154,6 +160,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(136, 14, 79));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"Hospital",g);
     }
 
     private void renderMall(int x,int y,int buildingWidth,int buildingHigh,
@@ -163,7 +170,7 @@ public class SimulationRender {
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(156, 204, 101));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -171,6 +178,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(51, 105, 30));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"Mall",g);
     }
 
     private void renderOffice(int x,int y,int buildingWidth,int buildingHigh,
@@ -180,7 +188,7 @@ public class SimulationRender {
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(255, 193, 7));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -188,6 +196,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(255, 143, 0));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"Office",g);
     }
 
     private void renderPark(int x,int y,int buildingWidth,int buildingHigh,
@@ -197,7 +206,7 @@ public class SimulationRender {
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(255, 112, 67));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -205,6 +214,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(216, 67, 21));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"Park",g);
     }
 
     private void renderRestaurant(int x,int y,int buildingWidth,int buildingHigh,
@@ -214,7 +224,7 @@ public class SimulationRender {
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(205, 220, 57));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -222,6 +232,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(130, 119, 23));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"Restaurant",g);
     }
 
     private void renderSchool(int x,int y,int buildingWidth,int buildingHigh,
@@ -231,7 +242,7 @@ public class SimulationRender {
         Graphics2D g2d = (Graphics2D) g;
 //        g2d.setColor(new Color(77, 208, 225));
 //        g2d.fillRect(x,y,buildingWidth,buildingHigh);
-        g2d.setColor(new Color(77, 208, 225));
+        g2d.setColor(new Color(224, 224, 224, 255));
         g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
         g2d.setColor(new Color(63, 81, 181));
 //        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
@@ -239,6 +250,7 @@ public class SimulationRender {
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(40, 53, 147, 255));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"School",g);
     }
 
 

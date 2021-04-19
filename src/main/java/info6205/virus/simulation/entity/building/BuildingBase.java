@@ -84,6 +84,7 @@ public class BuildingBase extends AreaBase {
                 rightDownXBuildingWall=leftUpXPublicArea;
                 break;
         }
+        gridElementsInitial(getArea());
     }
 
 
