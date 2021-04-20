@@ -151,6 +151,20 @@ public class DemoGenerator extends EntityGenerator{
             }
         }
 
+        for(int i=0;i<20;i++) {
+            int xLU = 60; //road9
+            int yLU = 40;
+            int roadWidth=2;
+            int roadHeight=4;
+            int xRD=xLU+4;
+            int yRD=yLU-roadWidth;
+            RoadArea newRoad9 = new RoadArea(xLU , yLU - i * roadWidth, xRD+roadHeight, yRD - i * roadWidth, map); //(6,40)->(10,38)
+            list.add(newRoad9);
+            if (i != 0) {
+                newRoad9.linkRodaArea(list.get(i - 1));
+            }
+        }
+
         // House generate
         List<House> houses = new ArrayList<>();
         for (int i=0;i<3;i++) {
