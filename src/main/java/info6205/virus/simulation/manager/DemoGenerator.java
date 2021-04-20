@@ -2,6 +2,7 @@ package info6205.virus.simulation.manager;
 
 import info6205.virus.simulation.entity.*;
 import info6205.virus.simulation.entity.building.*;
+import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class DemoGenerator extends EntityGenerator{
             }
         }
 
-        for(int i=0;i<=16;i++) {
+        for(int i=0;i<16;i++) {
             int xLU = 0;//road2
             int yLU = 32;
             int roadWidth=2;
@@ -205,15 +206,15 @@ public class DemoGenerator extends EntityGenerator{
         }
 
         //Apartment Generator
-//        for (int i=0;i<3;i++) {
-//            int xLU=68;
-//            int yLU=40;
-//            int high = 10;
-//            int width = 6;
-//            int roadWidth=1;
-//            Apartment apartment = new House(xLU, yLU-i*(high+4), high, width, roadWidth, map, Direction.WEST);
-//            houses.add(apartment);
-//        }
+        for (int i=0;i<3;i++) {
+            int xLU=68;
+            int yLU=40;
+            int high = 10;
+            int width = 6;
+            int roadWidth=1;
+            Apartment apartment = new Apartment(xLU, yLU-i*(high+4), high, width, roadWidth, map, Direction.WEST);
+            houses.add(apartment);
+        }
 
         //Office generator
         List<Office> office = new ArrayList<>();
@@ -259,6 +260,31 @@ public class DemoGenerator extends EntityGenerator{
         Hospital hospital1 = new Hospital(40, 4, 4, 12, 1, map, Direction.NORTH);
         hospital.add(hospital1);
 
+        //2->3
+        linkRoadAreaBy2points(7,30,8,33);
+        linkRoadAreaBy2points(9,30,8,33);
+        //2->8
+        linkRoadAreaBy2points(7,30,8,27);
+        linkRoadAreaBy2points(9,30,8,27);
+        //2->7
+        linkRoadAreaBy2points(31,30,36,31);
+        linkRoadAreaBy2points(31,30,36,29);
+        //1->7
+        linkRoadAreaBy2points(31,6,36,7);
+        linkRoadAreaBy2points(31,6,36,5);
+        //5->7
+        linkRoadAreaBy2points(41,20,36,21);
+        linkRoadAreaBy2points(41,20,36,19);
+        //4->9
+        linkRoadAreaBy2points(59,30,64,29);
+        linkRoadAreaBy2points(59,30,64,31);
+        //5->9
+        linkRoadAreaBy2points(59,20,64,21);
+        linkRoadAreaBy2points(59,20,64,19);
+        //6->9
+        linkRoadAreaBy2points(59,6,64,5);
+        linkRoadAreaBy2points(59,6,64,7);
+
 
         List<AreaBase> output = new ArrayList<>();
         output.addAll(list);
@@ -271,6 +297,29 @@ public class DemoGenerator extends EntityGenerator{
         output.addAll(hospital);
 
         return output;
+    }
+
+    private void linkRoadAreaBy2points(double x,double y,double x2,double y2){
+        RoadArea elementRoadAreaA=null;
+        RoadArea elementRoadAreaB=null;
+        try {
+            GridElement elementA=map.getGridElimentByXY(x,y);
+            GridElement elementB=map.getGridElimentByXY(x2,y2);
+            for(AreaBase areaBase:elementA.getAreas()){
+                if(areaBase instanceof RoadArea){
+                    elementRoadAreaA= (RoadArea) areaBase;
+                }
+            }
+            for(AreaBase areaBase:elementB.getAreas()){
+                if(areaBase instanceof RoadArea){
+                    elementRoadAreaB= (RoadArea) areaBase;
+                }
+            }
+            if(elementRoadAreaA==null||elementRoadAreaB==null) throw new Exception("Can't find roadArea");
+            elementRoadAreaA.linkRodaArea(elementRoadAreaB);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
