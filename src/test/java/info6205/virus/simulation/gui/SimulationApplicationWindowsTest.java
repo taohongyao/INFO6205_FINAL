@@ -48,7 +48,7 @@ class SimulationApplicationWindowsTest {
 
     @Test
     public void renderTest(){
-        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,70,50);
+        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication);
         while (true){
             try {
