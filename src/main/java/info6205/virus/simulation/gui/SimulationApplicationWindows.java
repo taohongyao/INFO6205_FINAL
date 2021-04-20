@@ -35,7 +35,7 @@ public class SimulationApplicationWindows {
         jFrame.setVisible(true);
         jFrame.setLocation(dim.width / 2 - jFrame.getSize().width / 2, dim.height / 2 - jFrame.getSize().height / 2);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), 0, simulationApplication.getMap().getHigh(), 0.078);
+        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), 0, simulationApplication.getMap().getHigh(), 0.1);
         logger.log(Level.INFO, "Start render.");
 
     }

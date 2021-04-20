@@ -7,6 +7,7 @@ import info6205.virus.simulation.executor.ExecutorBase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AreaManger extends ManagerBase {
     protected List<House> houses;
@@ -17,6 +18,9 @@ public class AreaManger extends ManagerBase {
     protected List<Restaurant> restaurants;
     protected List<School> schools;
     protected List<RoadArea> roadAreas;
+    protected List<Apartment> apartments;
+    protected List<AreaBase> others;
+    protected static Random random=new Random();
 
     public AreaManger() {
         houses=new ArrayList<>();
@@ -27,6 +31,8 @@ public class AreaManger extends ManagerBase {
          restaurants=new ArrayList<>();
          schools=new ArrayList<>();
          roadAreas=new ArrayList<>();
+        apartments=new ArrayList<>();
+        others=new ArrayList<>();
     }
     public void addAreas(List<AreaBase> areaBaseList){
         for (AreaBase areaBase:areaBaseList){
@@ -51,7 +57,65 @@ public class AreaManger extends ManagerBase {
             schools.add((School) areaBase);
         }else if(areaBase instanceof RoadArea){
             roadAreas.add((RoadArea) areaBase);
+        }else if(areaBase instanceof Apartment){
+            apartments.add((Apartment) areaBase);
+        }else {
+            others.add(areaBase);
         }
+    }
+
+    public House getRandomHouse(){
+        int i=houses.size();
+        i=random.nextInt(i);
+        return houses.get(i);
+    }
+
+    public Hospital getRandomHospital(){
+        int i=hospitals.size();
+        i=random.nextInt(i);
+        return hospitals.get(i);
+    }
+
+    public Mall getRandomMall(){
+        int i=malls.size();
+        i=random.nextInt(i);
+        return malls.get(i);
+    }
+
+    public Office getRandomOffice(){
+        int i=offices.size();
+        i=random.nextInt(i);
+        return offices.get(i);
+    }
+
+    public Park getRandomPark(){
+        int i=parks.size();
+        i=random.nextInt(i);
+        return parks.get(i);
+    }
+    public Restaurant getRandomRestaurant(){
+        int i=restaurants.size();
+        i=random.nextInt(i);
+        return restaurants.get(i);
+    }
+    public School getRandomSchool(){
+        int i=schools.size();
+        i=random.nextInt(i);
+        return schools.get(i);
+    }
+
+    public Apartment getRandomApartment(){
+        int i=apartments.size();
+        i=random.nextInt(i);
+        return apartments.get(i);
+    }
+
+    public List<Apartment> getApartments() {
+        return apartments;
+    }
+
+    public List<AreaBase> getOthers() {
+        return others;
     }
 
     public List<House> getHouses() {

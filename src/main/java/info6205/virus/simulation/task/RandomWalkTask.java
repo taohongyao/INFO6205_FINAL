@@ -51,6 +51,7 @@ public class RandomWalkTask extends MoveTask{
                 GridElement gridElement=null;
                 gridElement=map.getGridElimentByXY(nextX,nextY);
                 if(gridElement.isWalkAble()){
+                    // TODO: 4/20/2021 SocialDistance Judge
                     // Simulate keeping social Distance Rate
                     if(getRandom().nextDouble()<getKeepSocialDistanceRate()){
                         double xLeftUp=gridElement.getRealX()-socialDistance;

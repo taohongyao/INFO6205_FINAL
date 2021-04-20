@@ -27,10 +27,12 @@ public class Covid19 extends VirusBase {
         List<VirusBase> list=new ArrayList<>();
         if(haveAttachPlace()){
             GridElement currentPosition=getLocation();
+            // TODO: 4/19/2021  
 
         }else {
             PeopleBase peopleBase=getPeopleBase();
             GridElement currentPosition=peopleBase.getLocation();
+            // TODO: 4/19/2021
 
         }
         return list;

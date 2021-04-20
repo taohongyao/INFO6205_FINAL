@@ -4,6 +4,8 @@ import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.manager.PeopleManger;
 import info6205.virus.simulation.task.TaskBase;
 
+import java.util.List;
+
 
 public class PeopleExecutor implements ExecutorBase{
     protected PeopleManger peopleManger;
@@ -12,25 +14,8 @@ public class PeopleExecutor implements ExecutorBase{
         this.peopleManger=peopleManger;
     }
 
-    @Override
-    public void roundSchedule() {
-        for (PeopleBase peopleBase:peopleManger.getAdults()){
-            TaskBase taskBase=peopleBase.getCurrentTask();
-            if(taskBase.isFinished()){
-                peopleBase.deleteCurrentTask();
-            }
-            taskBase=peopleBase.getCurrentTask();
-            taskBase.executeTask(peopleBase);
-        }
-        for (PeopleBase peopleBase:peopleManger.getElders()){
-            TaskBase taskBase=peopleBase.getCurrentTask();
-            if(taskBase.isFinished()){
-                peopleBase.deleteCurrentTask();
-            }
-            taskBase=peopleBase.getCurrentTask();
-            taskBase.executeTask(peopleBase);
-        }
-        for (PeopleBase peopleBase:peopleManger.getTeens()){
+    private void execute( List<PeopleBase> peopleBaseList){
+        for (PeopleBase peopleBase:peopleBaseList){
             TaskBase taskBase=peopleBase.getCurrentTask();
             if(taskBase.isFinished()){
                 peopleBase.deleteCurrentTask();
@@ -39,9 +24,23 @@ public class PeopleExecutor implements ExecutorBase{
             taskBase.executeTask(peopleBase);
         }
     }
+    private void dailyExecute(List<PeopleBase> peopleBaseList){
+        for (PeopleBase peopleBase:peopleBaseList){
+            peopleBase.DailyStatusRefresh();
+        }
+    }
+
+    @Override
+    public void roundSchedule() {
+        execute(peopleManger.getAdults());
+        execute(peopleManger.getTeens());
+        execute(peopleManger.getElders());
+    }
 
     @Override
     public void daySchedule() {
-
+        dailyExecute(peopleManger.getElders());
+        dailyExecute(peopleManger.getTeens());
+        dailyExecute(peopleManger.getAdults());
     }
 }

@@ -8,20 +8,18 @@ public abstract class MoveTask extends TaskBase{
     protected double socialDistance;
     protected double keepSocialDistanceRate;
     protected double speed;
-    protected static Random random;
 
     public MoveTask(double socialDistance, double speed, double keepSocialDistanceRate) {
         this.socialDistance = socialDistance;
         this.speed = speed;
         this.keepSocialDistanceRate=keepSocialDistanceRate;
-        random=new Random();
     }
 
     public MoveTask(double socialDistance, double speed,Long walkSeed, double keepSocialDistanceRate) {
         this.socialDistance = socialDistance;
         this.speed = speed;
         this.keepSocialDistanceRate=keepSocialDistanceRate;
-        random=new Random(walkSeed);
+        random.setSeed(walkSeed);
     }
 
     public static Random getRandom() {

@@ -60,14 +60,14 @@ public class SimulationRender {
 
 
     private int convert2CanvasX(double xRealWorld){
-        return (int) (((xRealWorld-xLeftTopRealWorld)/zoom)+1);
+        return (int) (((xRealWorld-xLeftTopRealWorld)/zoom));
     }
     private int convert2CanvasY(double yRealWorld){
-        return (int) (((yLeftTopRealWorld-yRealWorld)/zoom)+1);
+        return (int) (((yLeftTopRealWorld-yRealWorld)/zoom));
     }
 
     private int convert2CanvasLength(double lengthRealWorld){
-        return (int) ((lengthRealWorld/zoom)+1);
+        return (int) ((lengthRealWorld/zoom));
     }
 
     private void renderRoad(RoadArea roadArea, Graphics g){
@@ -102,8 +102,9 @@ public class SimulationRender {
         int privateWidth=convert2CanvasLength(buildingBase.getPrivateWallWidth());
         int privateHigh=convert2CanvasLength(buildingBase.getPrivateWallHigh());
 
-
-        if (buildingBase instanceof House){
+        if (buildingBase instanceof Apartment){
+            renderApartment(x,y,width,high,xPublicRoadLU,yPublicRoadLU,roadWidth,roadHight,xPrivateBuildingArea,yPrivateBuildingArea,privateWidth,privateHigh,g);
+        }else if (buildingBase instanceof House){
             renderHouse(x,y,width,high,xPublicRoadLU,yPublicRoadLU,roadWidth,roadHight,xPrivateBuildingArea,yPrivateBuildingArea,privateWidth,privateHigh,g);
         }else if(buildingBase instanceof Hospital){
             renderHospital(x,y,width,high,xPublicRoadLU,yPublicRoadLU,roadWidth,roadHight,xPrivateBuildingArea,yPrivateBuildingArea,privateWidth,privateHigh,g);
@@ -141,6 +142,25 @@ public class SimulationRender {
         int arcWidth=(int)(buildingPrivateHigh*0.1);
         g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         g2d.setColor(new Color(69, 39, 160));
+        g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"House",g);
+    }
+
+    private void renderApartment(int x,int y,int buildingWidth,int buildingHigh,
+                             int xBuildingRoad,int yBuildingRoad,int roadWidth,int roadHigh,
+                             int xBuildingPrivate,int yBuildingPriavte,int buildingPrivateWidth,int buildingPrivateHigh,
+                             Graphics g){
+
+        Graphics2D g2d = (Graphics2D) g;
+//        g2d.setColor(new Color(77, 208, 225));
+//        g2d.fillRect(x,y,buildingWidth,buildingHigh);
+        g2d.setColor(new Color(224, 224, 224, 255));
+        g2d.fillRect(xBuildingRoad,yBuildingRoad,roadWidth,roadHigh);
+        g2d.setColor(new Color(38, 166, 154));
+//        g2d.fillRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh);
+        int arcWidth=(int)(buildingPrivateHigh*0.1);
+        g2d.fillRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
+        g2d.setColor(new Color(0, 105, 92));
         g2d.drawRoundRect(xBuildingPrivate,yBuildingPriavte,buildingPrivateWidth,buildingPrivateHigh,arcWidth,arcWidth);
         renderStringWithinBuilding(xBuildingPrivate,yBuildingPriavte,buildingPrivateHigh,"House",g);
     }

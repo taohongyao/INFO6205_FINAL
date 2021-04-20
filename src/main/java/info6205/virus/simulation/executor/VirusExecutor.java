@@ -14,27 +14,28 @@ public class VirusExecutor implements ExecutorBase {
         this.virusManager = virusManager;
     }
 
-    @Override
-    public void roundSchedule() {
-        List<VirusBase> copy=new ArrayList<>(virusManager.getPeopleInfectedVirus());
-        for (VirusBase virusBase:copy){
-            List<VirusBase> newVirus=virusBase.findCarrierAndInfect();
-            virusManager.addVirus(newVirus);
-        }
-        copy = new ArrayList<>(virusManager.getPlaceAttachedVirus());
+    private void execute(List<VirusBase> list){
+        List<VirusBase> copy=new ArrayList<>(list);
         for (VirusBase virusBase:copy){
             List<VirusBase> newVirus=virusBase.findCarrierAndInfect();
             virusManager.addVirus(newVirus);
         }
     }
+    private void dailyExecute(List<VirusBase> list){
+        for (VirusBase virusBase:list){
+            virusBase.minusPotentialDay();
+        }
+    }
+
+    @Override
+    public void roundSchedule() {
+        execute(virusManager.getPeopleInfectedVirus());
+        execute(virusManager.getPlaceAttachedVirus());
+    }
 
     @Override
     public void daySchedule() {
-        for (VirusBase virusBase:virusManager.getPeopleInfectedVirus()){
-            virusBase.minusPotentialDay();
-        }
-        for (VirusBase virusBase:virusManager.getPlaceAttachedVirus()){
-            virusBase.minusAliveDay();
-        }
+        dailyExecute(virusManager.getPeopleInfectedVirus());
+        dailyExecute(virusManager.getPlaceAttachedVirus());
     }
 }

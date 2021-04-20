@@ -2,12 +2,18 @@ package info6205.virus.simulation.task;
 
 import info6205.virus.simulation.entity.PeopleBase;
 
+import java.util.Random;
 import java.util.UUID;
 
 public abstract class TaskBase {
     protected String name;
     protected String id;
     protected boolean isFinished;
+    protected static Random random=new Random();
+
+    public static Random getRandom() {
+        return random;
+    }
 
     public TaskBase() {
         id= UUID.randomUUID().toString();

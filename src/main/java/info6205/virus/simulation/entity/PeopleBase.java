@@ -1,6 +1,8 @@
 package info6205.virus.simulation.entity;
 
 import info6205.virus.simulation.entity.building.House;
+import info6205.virus.simulation.entity.building.Office;
+import info6205.virus.simulation.entity.building.School;
 import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.task.TaskBase;
@@ -27,7 +29,25 @@ public abstract class PeopleBase {
     protected boolean needToSleep;
     protected boolean needToSchool;
     protected House home;
+    protected Office office;
+    protected School school;
 
+
+    public School getSchool() {
+        return school;
+    }
+
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public Office getOffice() {
+        return office;
+    }
+
+    public void setOffice(Office office) {
+        this.office = office;
+    }
 
     public House getHome() {
         return home;
@@ -139,6 +159,8 @@ public abstract class PeopleBase {
         }
         return null;
     }
+
+    abstract public void DailyStatusRefresh();
 
     public SimulationMap getMap() {
         return map;

@@ -52,6 +52,8 @@ public class SimulationApplication {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            // TODO: 4/20/2021 sync map time 
             if(run){
                 rounds++;
                 if(rounds%roundADay==0){

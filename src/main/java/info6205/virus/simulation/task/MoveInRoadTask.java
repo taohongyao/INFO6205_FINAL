@@ -161,6 +161,7 @@ public class MoveInRoadTask extends MoveTask{
                     }
                 }
 
+                // TODO: 4/20/2021 SocialDistance Judge 
                 double nextX=peopleBase.getX()+xOffset;
                 double nextY=peopleBase.getY()+yOffset;
                 GridElement gridElement=null;

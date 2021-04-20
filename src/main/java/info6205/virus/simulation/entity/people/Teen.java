@@ -7,4 +7,15 @@ public class Teen extends PeopleBase {
         sleepTimeDuration=8*60*60;
         eatingTimeDuration=30*60*60;
     }
+
+    @Override
+    public void DailyStatusRefresh() {
+        needToMorningWork=false;
+        needToAfternoonWork=false;
+        needToEatDinner=true;
+        needToEatBreakFast=true;
+        needToEatLunch=true;
+        needToSleep=true;
+        needToSchool=true;
+    }
 }

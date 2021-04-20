@@ -8,4 +8,15 @@ public class Adult extends PeopleBase {
         sleepTimeDuration=6*60*60;
         eatingTimeDuration=20*60*60;
     }
+
+    @Override
+    public void DailyStatusRefresh() {
+        needToMorningWork=true;
+        needToAfternoonWork=true;
+        needToEatDinner=true;
+        needToEatBreakFast=true;
+        needToEatLunch=true;
+        needToSleep=true;
+        needToSchool=false;
+    }
 }
