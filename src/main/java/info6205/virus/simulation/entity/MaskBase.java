@@ -14,4 +14,26 @@ public abstract class MaskBase {
         this.decayRate = decayRate;
         id = UUID.randomUUID().toString();
     }
+
+    public boolean isWare() {
+        return usage;
+    }
+
+    public void wareMask(){
+        usage=true;
+    }
+
+    public void unWareMask(){
+        usage=false;
+    }
+
+    public double getEffective() {
+        return effective;
+    }
+
+    public double getDecayRate() {
+        return decayRate;
+    }
+
+
 }

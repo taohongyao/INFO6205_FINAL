@@ -11,8 +11,8 @@ public class SimulationMap {
     private double width;
     private double high;
     private int divEveryMeter;
+    private Time currentTime;
     private List<List<GridElement>> grids;
-    private Road road;
 
 
     private static Logger logger=Logger.getLogger(SimulationMap.class.getName());
@@ -73,6 +73,14 @@ public class SimulationMap {
         return subGrids;
     }
 
+    public Time getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(Time currentTime) {
+        this.currentTime = currentTime;
+    }
+
     public double getWidth() {
         return width;
     }
@@ -97,11 +105,4 @@ public class SimulationMap {
         this.divEveryMeter = divEveryMeter;
     }
 
-    public Road getRoad() {
-        return road;
-    }
-
-    public void setRoad(Road road) {
-        this.road = road;
-    }
 }

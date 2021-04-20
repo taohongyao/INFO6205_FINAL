@@ -1,5 +1,6 @@
 package info6205.virus.simulation.entity;
 
+import info6205.virus.simulation.entity.building.House;
 import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.task.TaskBase;
@@ -15,6 +16,98 @@ public abstract class PeopleBase {
     protected MaskBase maskBase;
     protected Queue<TaskBase> tasks;
     protected SimulationMap map;
+    protected int sleepTimeDuration=6*60*60;
+    protected int eatingTimeDuration=20*60;
+
+    protected boolean needToEatBreakFast;
+    protected boolean needToEatLunch;
+    protected boolean needToEatDinner;
+    protected boolean needToMorningWork;
+    protected boolean needToAfternoonWork;
+    protected boolean needToSleep;
+    protected boolean needToSchool;
+    protected House home;
+
+
+    public House getHome() {
+        return home;
+    }
+
+    public void setHome(House home) {
+        this.home = home;
+    }
+
+    public boolean isNeedToSchool() {
+        return needToSchool;
+    }
+
+    public void setNeedToSchool(boolean needToSchool) {
+        this.needToSchool = needToSchool;
+    }
+
+    public int getEatingTimeDuration() {
+        return eatingTimeDuration;
+    }
+
+    public void setEatingTimeDuration(int eatingTimeDuration) {
+        this.eatingTimeDuration = eatingTimeDuration;
+    }
+
+    public int getSleepTimeDuration() {
+        return sleepTimeDuration;
+    }
+
+    public void setSleepTimeDuration(int sleepTimeDuration) {
+        this.sleepTimeDuration = sleepTimeDuration;
+    }
+
+    public boolean isNeedToEatBreakFast() {
+        return needToEatBreakFast;
+    }
+
+    public void setNeedToEatBreakFast(boolean needToEatBreakFast) {
+        this.needToEatBreakFast = needToEatBreakFast;
+    }
+
+    public boolean isNeedToEatLunch() {
+        return needToEatLunch;
+    }
+
+    public void setNeedToEatLunch(boolean needToEatLunch) {
+        this.needToEatLunch = needToEatLunch;
+    }
+
+    public boolean isNeedToEatDinner() {
+        return needToEatDinner;
+    }
+
+    public void setNeedToEatDinner(boolean needToEatDinner) {
+        this.needToEatDinner = needToEatDinner;
+    }
+
+    public boolean isNeedToMorningWork() {
+        return needToMorningWork;
+    }
+
+    public void setNeedToMorningWork(boolean needToMorningWork) {
+        this.needToMorningWork = needToMorningWork;
+    }
+
+    public boolean isNeedToAfternoonWork() {
+        return needToAfternoonWork;
+    }
+
+    public void setNeedToAfternoonWork(boolean needToAfternoonWork) {
+        this.needToAfternoonWork = needToAfternoonWork;
+    }
+
+    public boolean isNeedToSleep() {
+        return needToSleep;
+    }
+
+    public void setNeedToSleep(boolean needToSleep) {
+        this.needToSleep = needToSleep;
+    }
 
     public PeopleBase() {
         id= UUID.randomUUID().toString();
@@ -127,7 +220,7 @@ public abstract class PeopleBase {
         return tasks.peek();
     }
 
-    public void FinishCurrentTask(){
+    public void deleteCurrentTask(){
         tasks.remove();
     }
 

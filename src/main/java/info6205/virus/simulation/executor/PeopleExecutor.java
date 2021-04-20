@@ -1,12 +1,9 @@
 package info6205.virus.simulation.executor;
 
 import info6205.virus.simulation.entity.PeopleBase;
-import info6205.virus.simulation.entity.people.Adult;
-import info6205.virus.simulation.entity.people.Elder;
-import info6205.virus.simulation.entity.people.Teen;
 import info6205.virus.simulation.manager.PeopleManger;
+import info6205.virus.simulation.task.TaskBase;
 
-import java.util.List;
 
 public class PeopleExecutor implements ExecutorBase{
     protected PeopleManger peopleManger;
@@ -15,10 +12,32 @@ public class PeopleExecutor implements ExecutorBase{
         this.peopleManger=peopleManger;
     }
 
-
     @Override
     public void roundSchedule() {
-
+        for (PeopleBase peopleBase:peopleManger.getAdults()){
+            TaskBase taskBase=peopleBase.getCurrentTask();
+            if(taskBase.isFinished()){
+                peopleBase.deleteCurrentTask();
+            }
+            taskBase=peopleBase.getCurrentTask();
+            taskBase.executeTask(peopleBase);
+        }
+        for (PeopleBase peopleBase:peopleManger.getElders()){
+            TaskBase taskBase=peopleBase.getCurrentTask();
+            if(taskBase.isFinished()){
+                peopleBase.deleteCurrentTask();
+            }
+            taskBase=peopleBase.getCurrentTask();
+            taskBase.executeTask(peopleBase);
+        }
+        for (PeopleBase peopleBase:peopleManger.getTeens()){
+            TaskBase taskBase=peopleBase.getCurrentTask();
+            if(taskBase.isFinished()){
+                peopleBase.deleteCurrentTask();
+            }
+            taskBase=peopleBase.getCurrentTask();
+            taskBase.executeTask(peopleBase);
+        }
     }
 
     @Override

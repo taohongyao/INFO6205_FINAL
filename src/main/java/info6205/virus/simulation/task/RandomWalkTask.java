@@ -33,7 +33,7 @@ public class RandomWalkTask extends MoveTask{
     }
 
     @Override
-    protected void executeTask(PeopleBase peopleBase) {
+    public void executeTask(PeopleBase peopleBase) {
         SimulationMap map=peopleBase.getMap();
         int maxFindNextLocationTimes=5;
         try {

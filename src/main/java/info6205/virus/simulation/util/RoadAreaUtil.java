@@ -1,14 +1,10 @@
-package info6205.virus.simulation.map;
+package info6205.virus.simulation.util;
 
 import info6205.virus.simulation.entity.RoadArea;
 
 import java.util.*;
 
-public class Road {
-
-    protected List<RoadArea> roadAreas;
-
-
+public class RoadAreaUtil {
 
     public static List<RoadArea> findPath(RoadArea src, RoadArea des) throws Exception {
         List<RoadArea> path=new ArrayList<>();
@@ -36,14 +32,6 @@ public class Road {
         if(finded==false) throw new Exception("Can't find path.");
 
         return currentNode.getPath();
-    }
-
-    public List<RoadArea> getRoadAreas() {
-        return roadAreas;
-    }
-
-    public void setRoadAreas(List<RoadArea> roadAreas) {
-        this.roadAreas = roadAreas;
     }
 
 }

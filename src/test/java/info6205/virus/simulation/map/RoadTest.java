@@ -1,6 +1,7 @@
 package info6205.virus.simulation.map;
 
 import info6205.virus.simulation.entity.RoadArea;
+import info6205.virus.simulation.util.RoadAreaUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +23,7 @@ class RoadTest {
         roadArea5.linkRodaArea(roadArea6);
 
         try {
-            System.out.println(Road.findPath(roadArea2,roadArea6));
+            System.out.println(RoadAreaUtil.findPath(roadArea2,roadArea6));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -23,8 +23,6 @@ public class SimulationApplication {
     protected int rounds;
     protected int days;
 
-
-
     public SimulationApplication(int roundADay, double mapWidth,double mapHigh) {
         this.roundADay = roundADay;
         simulateSpeed=1;

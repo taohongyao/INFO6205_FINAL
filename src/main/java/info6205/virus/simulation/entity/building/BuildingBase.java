@@ -14,6 +14,11 @@ public class BuildingBase extends AreaBase {
     protected double publicAreaWidth;
     protected Direction direction;
 
+    protected int capacity;
+    protected int buildingSize;
+    protected int taskTime;
+
+
 
     protected double leftUpXPublicArea;
     protected double leftUpYPublicArea;
@@ -83,6 +88,7 @@ public class BuildingBase extends AreaBase {
                 leftUpXPublicArea=rightDownXPublicArea-publicAreaWidth;
                 rightDownXBuildingWall=leftUpXPublicArea;
                 break;
+            default:
         }
         gridElementsInitial(getArea());
     }
@@ -188,6 +194,38 @@ public class BuildingBase extends AreaBase {
 
     public void setRightDownXBuildingWall(double rightDownXBuildingWall) {
         this.rightDownXBuildingWall = rightDownXBuildingWall;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void decreaseSizeByOne(){
+        buildingSize--;
+    }
+
+    public void increaseSizeByOne(){
+        buildingSize++;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int getBuildingSize() {
+        return buildingSize;
+    }
+
+    public void setBuildingSize(int buildingSize) {
+        this.buildingSize = buildingSize;
+    }
+
+    public int getTaskTime() {
+        return taskTime;
+    }
+
+    public void setTaskTime(int taskTime) {
+        this.taskTime = taskTime;
     }
 
     public double getRightDownYBuildingWall() {

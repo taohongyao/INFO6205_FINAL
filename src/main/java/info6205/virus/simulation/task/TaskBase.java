@@ -25,7 +25,7 @@ public abstract class TaskBase {
         return id;
     }
 
-    protected abstract void executeTask(PeopleBase peopleBase);
+    public abstract void executeTask(PeopleBase peopleBase);
 
     public void setId(String id) {
         this.id = id;
