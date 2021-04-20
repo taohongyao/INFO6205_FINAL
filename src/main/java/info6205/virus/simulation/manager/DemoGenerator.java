@@ -41,12 +41,7 @@ public class DemoGenerator extends EntityGenerator{
             int roadHeight=2;
             int xRD=xLU+roadWidth;
             int yRD=yLU-roadWidth;
-             /*
-             int roadWidth2=2;
-             int xRD1=xLU1+roadWidth;
-             int yRD1=yLU1-roadWidth;
-             */
-            RoadArea newRoad2 = new RoadArea(xLU + i * roadWidth, yLU, xRD - i * roadWidth * 2, yRD-roadHeight, map); //(0,32)->(2,28)
+            RoadArea newRoad2 = new RoadArea(xLU + i * roadWidth, yLU, xRD + i * roadWidth, yRD-roadHeight, map); //(0,32)->(2,28)
             list.add(newRoad2);
             if (i != 0) {
                 newRoad2.linkRodaArea(list.get(i - 1));
@@ -142,6 +137,20 @@ public class DemoGenerator extends EntityGenerator{
             }
         }
 
+        for(int i=0;i<20;i++) {
+            int xLU = 60; //road9
+            int yLU = 40;
+            int roadWidth=2;
+            int roadHeight=4;
+            int xRD=xLU+4;
+            int yRD=yLU-roadWidth;
+            RoadArea newRoad9 = new RoadArea(xLU , yLU - i * roadWidth, xRD+roadHeight, yRD - i * roadWidth, map); //(6,40)->(10,38)
+            list.add(newRoad9);
+            if (i != 0) {
+                newRoad9.linkRodaArea(list.get(i - 1));
+            }
+        }
+
         // House generate
         List<House> houses = new ArrayList<>();
         for (int i=0;i<3;i++) {
@@ -162,6 +171,35 @@ public class DemoGenerator extends EntityGenerator{
             House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.NORTH);
             houses.add(house);
         }
+        for (int i=0;i<2;i++) {
+            int xLU=10;
+            int yLU=36;
+            int high = 4;
+            int width = 10;
+            int roadWidth=1;
+            House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.SOUTH);
+            houses.add(house);
+        }
+        for (int i=0;i<2;i++) {
+            int xLU=10;
+            int yLU=28;
+            int high = 4;
+            int width = 10;
+            int roadWidth=1;
+            House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.NORTH);
+            houses.add(house);
+        }
+
+        //Apartment Generator
+//        for (int i=0;i<3;i++) {
+//            int xLU=68;
+//            int yLU=40;
+//            int high = 10;
+//            int width = 6;
+//            int roadWidth=1;
+//            Apartment apartment = new House(xLU, yLU-i*(high+4), high, width, roadWidth, map, Direction.WEST);
+//            houses.add(apartment);
+//        }
 
         //Office generator
         List<Office> office = new ArrayList<>();
@@ -186,7 +224,7 @@ public class DemoGenerator extends EntityGenerator{
 
         //School generator
         List<School> school = new ArrayList<>();
-        School school1 = new School(4, 24, 12, 8, 1, map, Direction.NORTH);
+        School school1 = new School(4, 24, 10, 18, 1, map, Direction.NORTH);
         school.add(school1);
 
         //Restaurant generator
