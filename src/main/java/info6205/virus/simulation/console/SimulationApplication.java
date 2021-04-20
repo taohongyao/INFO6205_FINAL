@@ -6,6 +6,7 @@ import info6205.virus.simulation.entity.VirusBase;
 import info6205.virus.simulation.executor.ExecutorBase;
 import info6205.virus.simulation.manager.*;
 import info6205.virus.simulation.map.SimulationMap;
+import info6205.virus.simulation.map.Time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,19 @@ public class SimulationApplication {
 //        executorBaseList.add(virusManager.createExecutor());
     }
 
+    public Time getTime(){
+        int dayTime=rounds%roundADay;
+        if(dayTime<roundADay/4){
+            return  Time.MORNING;
+        }else if(dayTime<roundADay/2){
+            return  Time.AFTERNOON;
+        }else if(dayTime<roundADay*3/4){
+            return Time.NIGHT;
+        }else {
+            return Time.MIDNIGHT;
+        }
+    }
+
     public void run(){
         while (true){
             try {
@@ -53,10 +67,11 @@ public class SimulationApplication {
                 e.printStackTrace();
             }
 
-            // TODO: 4/20/2021 sync map time 
             if(run){
                 rounds++;
-                if(rounds%roundADay==0){
+                int dayTime=rounds%roundADay;
+                map.setCurrentTime(getTime());
+                if(dayTime==0){
                     days++;
                     for (ExecutorBase executorBase:executorBaseList){
                         executorBase.daySchedule();

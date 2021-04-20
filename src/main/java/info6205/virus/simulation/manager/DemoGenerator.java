@@ -205,15 +205,15 @@ public class DemoGenerator extends EntityGenerator{
         }
 
         //Apartment Generator
-//        for (int i=0;i<3;i++) {
-//            int xLU=68;
-//            int yLU=40;
-//            int high = 10;
-//            int width = 6;
-//            int roadWidth=1;
-//            Apartment apartment = new House(xLU, yLU-i*(high+4), high, width, roadWidth, map, Direction.WEST);
-//            houses.add(apartment);
-//        }
+        for (int i=0;i<3;i++) {
+            int xLU=68;
+            int yLU=40;
+            int high = 10;
+            int width = 6;
+            int roadWidth=1;
+            Apartment apartment = new Apartment(xLU, yLU-i*(high+4), high, width, roadWidth, map, Direction.WEST);
+            houses.add(apartment);
+        }
 
         //Office generator
         List<Office> office = new ArrayList<>();
