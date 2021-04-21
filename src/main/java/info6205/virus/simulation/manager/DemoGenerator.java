@@ -2,11 +2,17 @@ package info6205.virus.simulation.manager;
 
 import info6205.virus.simulation.entity.*;
 import info6205.virus.simulation.entity.building.*;
+import info6205.virus.simulation.entity.people.Adult;
+import info6205.virus.simulation.entity.people.Elder;
+import info6205.virus.simulation.entity.people.Teen;
+import info6205.virus.simulation.entity.virus.Covid19;
 import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
+import info6205.virus.simulation.task.TasksGenerateTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +37,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad1 = new RoadArea(xLU + i * roadWidth, yLU, xRD + i * roadWidth, yRD-roadHeight, map); //(0,4)->(2,0)
             list.add(newRoad1);
             if (i != 0) {
-                newRoad1.linkRodaArea(list.get(i - 1));
+                newRoad1.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -45,7 +51,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad2 = new RoadArea(xLU + i * roadWidth, yLU, xRD + i * roadWidth, yRD-roadHeight, map); //(0,32)->(2,28)
             list.add(newRoad2);
             if (i != 0) {
-                newRoad2.linkRodaArea(list.get(i - 1));
+                newRoad2.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -60,7 +66,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad3 = new RoadArea(xLU , yLU - i * roadWidth, xRD, yRD - i * roadWidth, map); //(6,40)->(10,38)
             list.add(newRoad3);
             if (i != 0) {
-                newRoad3.linkRodaArea(list.get(i - 1));
+                newRoad3.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -75,7 +81,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad4 = new RoadArea(xLU + i * roadWidth, yLU, xRD + i * roadWidth, yRD-roadHeight, map); //(40,32)->(42,28)
             list.add(newRoad4);
             if (i != 0) {
-                newRoad4.linkRodaArea(list.get(i - 1));
+                newRoad4.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -89,7 +95,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad5 = new RoadArea(xLU + i * roadWidth, yLU, xRD + i * roadWidth , yRD-roadHeight, map); //(40,22)->(42,18)
             list.add(newRoad5);
             if (i != 0) {
-                newRoad5.linkRodaArea(list.get(i - 1));
+                newRoad5.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -103,7 +109,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad6 = new RoadArea(xLU + i * roadWidth , yLU, xRD + i * roadWidth, yRD-roadHeight, map); //(40,8)->(42,4)
             list.add(newRoad6);
             if (i != 0) {
-                newRoad6.linkRodaArea(list.get(i - 1));
+                newRoad6.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -119,7 +125,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad7 = new RoadArea(xLU , yLU - i * roadWidth, xRD+roadHeight, yRD - i * roadWidth, map); //(6,40)->(10,38)
             list.add(newRoad7);
             if (i != 0) {
-                newRoad7.linkRodaArea(list.get(i - 1));
+                newRoad7.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -134,7 +140,7 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad8 = new RoadArea(xLU , yLU - i * roadWidth, xRD, yRD - i * roadWidth, map); //(6,40)->(10,38)
             list.add(newRoad8);
             if (i != 0) {
-                newRoad8.linkRodaArea(list.get(i - 1));
+                newRoad8.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
@@ -148,23 +154,23 @@ public class DemoGenerator extends EntityGenerator{
             RoadArea newRoad9 = new RoadArea(xLU , yLU - i * roadWidth, xRD+roadHeight, yRD - i * roadWidth, map); //(6,40)->(10,38)
             list.add(newRoad9);
             if (i != 0) {
-                newRoad9.linkRodaArea(list.get(i - 1));
+                newRoad9.linkRodaArea(list.get(list.size() - 2));
             }
         }
 
-        for(int i=0;i<20;i++) {
-            int xLU = 60; //road9
-            int yLU = 40;
-            int roadWidth=2;
-            int roadHeight=4;
-            int xRD=xLU+4;
-            int yRD=yLU-roadWidth;
-            RoadArea newRoad9 = new RoadArea(xLU , yLU - i * roadWidth, xRD+roadHeight, yRD - i * roadWidth, map); //(6,40)->(10,38)
-            list.add(newRoad9);
-            if (i != 0) {
-                newRoad9.linkRodaArea(list.get(i - 1));
-            }
-        }
+//        for(int i=0;i<20;i++) {
+//            int xLU = 60; //road9
+//            int yLU = 40;
+//            int roadWidth=2;
+//            int roadHeight=4;
+//            int xRD=xLU+4;
+//            int yRD=yLU-roadWidth;
+//            RoadArea newRoad9 = new RoadArea(xLU , yLU - i * roadWidth, xRD+roadHeight, yRD - i * roadWidth, map); //(6,40)->(10,38)
+//            list.add(newRoad9);
+//            if (i != 0) {
+//                newRoad9.linkRodaArea(list.get(list.size() - 2));
+//            }
+//        }
 
         // House generate
         List<House> houses = new ArrayList<>();
@@ -175,6 +181,7 @@ public class DemoGenerator extends EntityGenerator{
             int width = 10;
             int roadWidth=1;
             House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.SOUTH);
+            linkBuildingToNext(house);
             houses.add(house);
         }
         for (int i=0;i<3;i++) {
@@ -184,6 +191,7 @@ public class DemoGenerator extends EntityGenerator{
             int width = 10;
             int roadWidth=1;
             House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.NORTH);
+            linkBuildingToNext(house);
             houses.add(house);
         }
         for (int i=0;i<2;i++) {
@@ -193,6 +201,7 @@ public class DemoGenerator extends EntityGenerator{
             int width = 10;
             int roadWidth=1;
             House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.SOUTH);
+            linkBuildingToNext(house);
             houses.add(house);
         }
         for (int i=0;i<2;i++) {
@@ -202,6 +211,7 @@ public class DemoGenerator extends EntityGenerator{
             int width = 10;
             int roadWidth=1;
             House house = new House(xLU+i*width, yLU, high, width, roadWidth, map, Direction.NORTH);
+            linkBuildingToNext(house);
             houses.add(house);
         }
 
@@ -213,6 +223,7 @@ public class DemoGenerator extends EntityGenerator{
             int width = 6;
             int roadWidth=1;
             Apartment apartment = new Apartment(xLU, yLU-i*(high+4), high, width, roadWidth, map, Direction.WEST);
+            linkBuildingToNext(apartment);
             houses.add(apartment);
         }
 
@@ -230,17 +241,24 @@ public class DemoGenerator extends EntityGenerator{
 
         Office office4 = new Office(52, 4, 4, 8, 1, map, Direction.NORTH);
         office.add(office4);
+        linkBuildingToNext(office1);
+        linkBuildingToNext(office2);
+        linkBuildingToNext(office3);
+        linkBuildingToNext(office4);
 
 
         //Park generator
         List<Park> park = new ArrayList<>();
         Park park1 = new Park(40, 40, 8, 20, 1, map, Direction.SOUTH);
         park.add(park1);
+        linkBuildingToNext(park1);
 
         //School generator
         List<School> school = new ArrayList<>();
         School school1 = new School(4, 24, 10, 18, 1, map, Direction.NORTH);
         school.add(school1);
+        linkRoadAreaBy2points(8,23,8,25);
+//        linkBuildingToNext(school1);
 
         //Restaurant generator
         List<Restaurant> restaurant = new ArrayList<>();
@@ -249,15 +267,19 @@ public class DemoGenerator extends EntityGenerator{
 
         Restaurant restaurant2 = new Restaurant(40, 28, 6, 12, 1, map, Direction.NORTH);
         restaurant.add(restaurant2);
+        linkBuildingToNext(restaurant1);
+        linkBuildingToNext(restaurant2);
 
         //Mall generator
         List<Mall> mall = new ArrayList<>();
         Mall mall1 = new Mall(40, 18, 10, 20, 1, map, Direction.NORTH);
+        linkBuildingToNext(mall1);
         mall.add(mall1);
 
         //Hospital generator
         List<Hospital> hospital = new ArrayList<>();
         Hospital hospital1 = new Hospital(40, 4, 4, 12, 1, map, Direction.NORTH);
+        linkBuildingToNext(hospital1);
         hospital.add(hospital1);
 
         //2->3
@@ -299,6 +321,106 @@ public class DemoGenerator extends EntityGenerator{
         return output;
     }
 
+    private void linkBuildingToNext(BuildingBase buildingBase){
+        double x=buildingBase.getPublicArea().getCenterX();
+        double y=buildingBase.getPublicArea().getCenterY();
+        AreaBase areaBase=buildingBase.getPublicArea();
+        int divided=5;
+        double width=areaBase.getWidth()/divided;
+        double high=areaBase.getHight()/divided;
+        Direction direction=buildingBase.getDirection();
+        for(int i =0;i<divided;i++){
+            switch (direction){
+                case NORTH:
+                    linkRoadAreaBy2points(x,y, buildingBase.getLeftUpX()+i*width+width/2,areaBase.getLeftUpY()+1);
+                    break;
+                case SOUTH:
+                    linkRoadAreaBy2points(x,y, buildingBase.getLeftUpX()+i*width+width/2,areaBase.getRightDownY()-1);
+                    break;
+                case WEST:
+                    linkRoadAreaBy2points(x,y, buildingBase.getLeftUpX()-1,areaBase.getLeftUpY()-i*high-high/2);
+                    break;
+                case EAST:
+                    linkRoadAreaBy2points(x,y, buildingBase.getRightDownX()+1,areaBase.getLeftUpY()-i*high-high/2);
+                    break;
+                default:
+            }
+        }
+    }
+
+
+
+    @Override
+    public List<PeopleBase> generatePeople(AreaManger areaManger) {
+        List<PeopleBase> peopleBases=new ArrayList<>();
+        List<House> houses=areaManger.getHouses();
+        List<Apartment> apartments=areaManger.getApartments();
+        Random random=new Random();
+
+        for (House house:houses){
+            int range=random.nextInt(100);
+            if(range<70){
+                PeopleBase adult=new Adult(house,areaManger.getRandomOffice());
+                PeopleBase teen=new Teen(house,areaManger.getRandomSchool());
+                adult.addTask(new TasksGenerateTask(areaManger));
+                teen.addTask(new TasksGenerateTask(areaManger));
+                peopleBases.add(adult);
+                peopleBases.add(teen);
+            }else {
+                PeopleBase elder=new Elder(house);
+                elder.addTask(new TasksGenerateTask(areaManger));
+                peopleBases.add(elder);
+            }
+        }
+        for (Apartment apartment:apartments){
+            int range=random.nextInt(100);
+            if(range<70){
+                PeopleBase adult=new Adult(apartment,areaManger.getRandomOffice());
+                PeopleBase teen=new Teen(apartment,areaManger.getRandomSchool());
+                adult.addTask(new TasksGenerateTask(areaManger));
+                teen.addTask(new TasksGenerateTask(areaManger));
+                peopleBases.add(adult);
+                peopleBases.add(teen);
+            }else {
+                PeopleBase elder=new Elder(apartment);
+                elder.addTask(new TasksGenerateTask(areaManger));
+                peopleBases.add(elder);
+            }
+        }
+        return peopleBases;
+    }
+
+    @Override
+    public List<VirusBase> generateVirus(PeopleManger peopleManger) {
+        List<VirusBase> virusBaseList=new ArrayList<>();
+        Random random=new Random();
+        for(PeopleBase peopleBase:peopleManger.getAdults()){
+            int range=random.nextInt(1000);
+            if(range<100){
+                Covid19 covid19=new Covid19();
+                virusBaseList.add(covid19);
+                covid19.infectPeople(peopleBase);
+            }
+        }
+        for(PeopleBase peopleBase:peopleManger.getElders()){
+            int range=random.nextInt(1000);
+            if(range<100){
+                Covid19 covid19=new Covid19();
+                virusBaseList.add(covid19);
+                covid19.infectPeople(peopleBase);
+            }
+        }
+        for(PeopleBase peopleBase:peopleManger.getTeens()){
+            int range=random.nextInt(1000);
+            if(range<5){
+                Covid19 covid19=new Covid19();
+                virusBaseList.add(covid19);
+                covid19.infectPeople(peopleBase);
+            }
+        }
+        return virusBaseList;
+    }
+
     private void linkRoadAreaBy2points(double x,double y,double x2,double y2){
         RoadArea elementRoadAreaA=null;
         RoadArea elementRoadAreaB=null;
@@ -308,28 +430,22 @@ public class DemoGenerator extends EntityGenerator{
             for(AreaBase areaBase:elementA.getAreas()){
                 if(areaBase instanceof RoadArea){
                     elementRoadAreaA= (RoadArea) areaBase;
+                    break;
                 }
             }
             for(AreaBase areaBase:elementB.getAreas()){
                 if(areaBase instanceof RoadArea){
                     elementRoadAreaB= (RoadArea) areaBase;
+                    break;
                 }
             }
             if(elementRoadAreaA==null||elementRoadAreaB==null) throw new Exception("Can't find roadArea");
             elementRoadAreaA.linkRodaArea(elementRoadAreaB);
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
-    @Override
-    public List<PeopleBase> generatePeople(List<AreaBase> AreaBase) {
-        return null;
-    }
-
-    @Override
-    public List<VirusBase> generateVirus(List<PeopleBase> peopleBases) {
-        return null;
-    }
 
 }

@@ -14,7 +14,7 @@ class SimulationApplicationWindowsTest {
 
     public static void main(String [] args){
         SimulationApplication simulationApplication=new SimulationApplication(60*60*24,70,50);
-        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication);
+        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-20, 50, 0.108);
         JPanel canvas=windows.getCanvas();
         SimulationMap map=new SimulationMap(10,10);
         RoadArea roadArea=new RoadArea(1,2,2,1,map);
@@ -47,9 +47,19 @@ class SimulationApplicationWindowsTest {
     }
 
     @Test
+    public void applicationStart2(){
+        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
+        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-8, 50, 0.088);
+        simulationApplication.setWindows(windows);
+        simulationApplication.start();
+
+    }
+
+
+    @Test
     public void renderTest(){
         SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
-        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication);
+        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-20, 50, 0.108);
         while (true){
             try {
                 Thread.sleep(5);

@@ -14,6 +14,6 @@ public abstract class EntityGenerator {
         this.map = map;
     }
     public abstract  List<AreaBase> generateBuilding();
-    public abstract  List<PeopleBase> generatePeople(List<AreaBase> AreaBase);
-    public abstract  List<VirusBase> generateVirus(List<PeopleBase> peopleBases);
+    public abstract  List<PeopleBase> generatePeople(AreaManger areaManger);
+    public abstract  List<VirusBase> generateVirus(PeopleManger peopleManger);
 }

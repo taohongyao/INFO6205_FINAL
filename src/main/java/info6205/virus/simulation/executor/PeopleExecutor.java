@@ -30,6 +30,12 @@ public class PeopleExecutor implements ExecutorBase{
         }
     }
 
+    private void weekendsExecute(List<PeopleBase> peopleBaseList){
+        for (PeopleBase peopleBase:peopleBaseList){
+            peopleBase.weekendDailyRefresh();
+        }
+    }
+
     @Override
     public void roundSchedule() {
         execute(peopleManger.getAdults());
@@ -42,5 +48,12 @@ public class PeopleExecutor implements ExecutorBase{
         dailyExecute(peopleManger.getElders());
         dailyExecute(peopleManger.getTeens());
         dailyExecute(peopleManger.getAdults());
+    }
+
+    @Override
+    public void weekendsSchedule() {
+        weekendsExecute(peopleManger.getElders());
+        weekendsExecute(peopleManger.getTeens());
+        weekendsExecute(peopleManger.getAdults());
     }
 }

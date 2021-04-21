@@ -1,9 +1,11 @@
 package info6205.virus.simulation.manager;
 
 import info6205.virus.simulation.entity.PeopleBase;
+import info6205.virus.simulation.entity.mask.N95;
 import info6205.virus.simulation.entity.people.Adult;
 import info6205.virus.simulation.entity.people.Elder;
 import info6205.virus.simulation.entity.people.Teen;
+import info6205.virus.simulation.entity.virus.Covid19;
 import info6205.virus.simulation.executor.ExecutorBase;
 import info6205.virus.simulation.executor.PeopleExecutor;
 
@@ -43,11 +45,69 @@ public class PeopleManger extends ManagerBase{
         }
     }
 
+    public void setSocialDistanceAndKeepRate(Double socialDistance,Double distanceKeepRate){
+        setSocialDistanceAndKeepRate(getAdults(),socialDistance,distanceKeepRate);
+        setSocialDistanceAndKeepRate(getElders(),socialDistance,distanceKeepRate);
+        setSocialDistanceAndKeepRate(getTeens(),socialDistance,distanceKeepRate);
+    }
+
+
+    public void setAllHaveMask(){
+        setAllHaveMask(getTeens());
+        setAllHaveMask(getAdults());
+        setAllHaveMask(getElders());
+    }
+    public void removeAllMask(){
+        removeAllMask(getTeens());
+        removeAllMask(getAdults());
+        removeAllMask(getElders());
+    }
+
+    public void setAllHaveMask(List<PeopleBase> list){
+        for (PeopleBase peopleBase:list){
+            peopleBase.setMaskBase(new N95());
+        }
+    }
+
+    public void removeAllMask(List<PeopleBase> list){
+        for (PeopleBase peopleBase:list){
+            peopleBase.setMaskBase(null);
+        }
+    }
+
+    public void setSocialDistanceAndKeepRate(List<PeopleBase> list,Double socialDistance,Double distanceKeepRate){
+        for (PeopleBase peopleBase:list){
+            peopleBase.setSocialDistance(socialDistance);
+            peopleBase.setKeepSocialDistanceRate(distanceKeepRate);
+        }
+    }
+
 
     public PeopleManger() {
         teens=new ArrayList<>();
         adults=new ArrayList<>();
         elders=new ArrayList<>();
+    }
+
+    public int getInfectedAdultCount(){
+        return getInfectedCount(getAdults());
+    }
+    public int getInfectedTeenCount(){
+        return getInfectedCount(getElders());
+    }
+    public int getInfectedElderCount(){
+        return getInfectedCount(getTeens());
+    }
+
+    public static int getInfectedCount(List<PeopleBase> peopleBases){
+        int sum=0;
+        Covid19 a=new Covid19();
+        for(PeopleBase peopleBase:peopleBases){
+            if(peopleBase.isInfected(a)){
+                sum++;
+            }
+        }
+        return sum;
     }
 
     @Override

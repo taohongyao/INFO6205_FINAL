@@ -24,6 +24,7 @@ public class VirusExecutor implements ExecutorBase {
     private void dailyExecute(List<VirusBase> list){
         for (VirusBase virusBase:list){
             virusBase.minusPotentialDay();
+            virusBase.makeCarrierPeopleChangeState();
         }
     }
 
@@ -37,5 +38,10 @@ public class VirusExecutor implements ExecutorBase {
     public void daySchedule() {
         dailyExecute(virusManager.getPeopleInfectedVirus());
         dailyExecute(virusManager.getPlaceAttachedVirus());
+    }
+
+    @Override
+    public void weekendsSchedule() {
+
     }
 }

@@ -26,7 +26,11 @@ public class RoadArea extends AreaBase{
 
     @Override
     public GridElement getRandomWalkableGridElement() {
-        return getRandomGridElement();
+        int high=area.size();
+        int width=area.get(0).size();
+        int y=random.nextInt(high-2)+1;
+        int x=random.nextInt(width-2)+1;
+        return area.get(y).get(x);
     }
 
     public RoadArea addAdjacentRoadArea(RoadArea area){

@@ -1,5 +1,6 @@
 package info6205.virus.simulation.manager;
 
+import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.entity.VirusBase;
 import info6205.virus.simulation.executor.ExecutorBase;
 import info6205.virus.simulation.executor.VirusExecutor;
@@ -29,6 +30,23 @@ public class VirusManager extends ManagerBase{
     public VirusManager() {
         peopleInfectedVirus=new ArrayList<>();
         placeAttachedVirus=new ArrayList<>();
+    }
+
+    public double getKFactor(){
+        int i=0;
+        double c=0;
+        for(VirusBase base:peopleInfectedVirus){
+            int subi=0;
+            for(Integer contactTimes:base.getContactRecord().values()){
+                if(contactTimes>0){
+                    subi++;
+                }
+            }
+            i+=subi;
+            if(subi==0) subi=100;
+            c+=(0.0+base.getInfectRecord().size()/subi);
+        }
+        return i*c/peopleInfectedVirus.size();
     }
 
     public List<VirusBase> getPeopleInfectedVirus() {

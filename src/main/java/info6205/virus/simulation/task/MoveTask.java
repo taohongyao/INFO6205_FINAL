@@ -22,6 +22,10 @@ public abstract class MoveTask extends TaskBase{
         random.setSeed(walkSeed);
     }
 
+    public double getRandomSpeed(){
+        return speed*(1-0.2*getRandom().nextDouble());
+    }
+
     public static Random getRandom() {
         return random;
     }

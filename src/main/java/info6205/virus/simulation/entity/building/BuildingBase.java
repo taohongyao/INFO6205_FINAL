@@ -16,7 +16,8 @@ public class BuildingBase extends AreaBase {
 
     protected int capacity;
     protected int buildingSize;
-    protected int taskTime;
+    protected static double timeSpeedZoom=1;
+    protected int taskTime=60*60*30;
 
 
 
@@ -37,14 +38,19 @@ public class BuildingBase extends AreaBase {
         int width=buildingPrivateArea.get(0).size();
         for (int i= 0;i<high;i++){
             //set building north and south not walkable
-            if(i==0||i==high-1){
+            if(i!=0&&i!=high-1){
+                int j=0;
                 for(GridElement gridElement:buildingPrivateArea.get(i)){
-                    gridElement.setWalkAble(false);
+                    if (j!=0&&j!=width){
+                        gridElement.setWalkAble(true);
+                        gridElement.setConnectedId(getId());
+                    }
+                    j++;
                 }
             }else {
                 // set building left and right not walkable
-                buildingPrivateArea.get(i).get(0).setWalkAble(false);
-                buildingPrivateArea.get(i).get(width-1).setWalkAble(false);
+                //buildingPrivateArea.get(i).get(0).setWalkAble(false);
+                //buildingPrivateArea.get(i).get(width-1).setWalkAble(false);
             }
         }
     }
@@ -106,6 +112,15 @@ public class BuildingBase extends AreaBase {
     }
     public double getPublicRoadHigh(){
         return leftUpYPublicArea-rightDownYPublicArea;
+    }
+
+
+    public static double getTimeSpeedZoom() {
+        return timeSpeedZoom;
+    }
+
+    public static void setTimeSpeedZoom(double timeSpeedZoom) {
+        BuildingBase.timeSpeedZoom = timeSpeedZoom;
     }
 
     public double getPublicAreaWidth() {
@@ -221,7 +236,7 @@ public class BuildingBase extends AreaBase {
     }
 
     public int getTaskTime() {
-        return taskTime;
+        return (int) (taskTime*timeSpeedZoom);
     }
 
     public void setTaskTime(int taskTime) {

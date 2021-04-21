@@ -7,6 +7,8 @@ import info6205.virus.simulation.entity.VirusBase;
 import java.util.*;
 
 public class GridElement {
+    private String connectedId;
+    private String id;
     private boolean walkAble;
     private int mapXIndex;
     private int mapYIndex;
@@ -29,6 +31,7 @@ public class GridElement {
         areas=new ArrayList<>();
         virus=new ArrayList<>();
         this.map=map;
+        id=UUID.randomUUID().toString();
     }
 
 
@@ -63,8 +66,25 @@ public class GridElement {
         }
     }
 
+    public List<GridElement> getAdjacentElement(){
+        return map.getAdjacentElements(this);
+    }
+
     public boolean isWalkAble() {
         return walkAble;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+
+    public String getConnectedId() {
+        return connectedId;
+    }
+
+    public void setConnectedId(String connectedId) {
+        this.connectedId = connectedId;
     }
 
     public void setWalkAble(boolean walkAble) {
@@ -118,4 +138,16 @@ public class GridElement {
         return peopleList;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GridElement that = (GridElement) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

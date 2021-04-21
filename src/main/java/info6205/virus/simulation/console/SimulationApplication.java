@@ -3,13 +3,21 @@ package info6205.virus.simulation.console;
 import info6205.virus.simulation.entity.AreaBase;
 import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.entity.VirusBase;
+import info6205.virus.simulation.entity.building.BuildingBase;
 import info6205.virus.simulation.executor.ExecutorBase;
+import info6205.virus.simulation.gui.SimulationApplicationWindows;
+import info6205.virus.simulation.logger.Log;
 import info6205.virus.simulation.manager.*;
 import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.map.Time;
+import info6205.virus.simulation.map.Week;
+import info6205.virus.simulation.record.DataRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SimulationApplication {
     protected List<ExecutorBase> executorBaseList;
@@ -17,16 +25,30 @@ public class SimulationApplication {
     protected AreaManger areaManger;
     protected PeopleManger peopleManger;
     protected VirusManager virusManager;
+    protected SimulationApplicationWindows windows;
 
-    protected int roundADay;
+
+    protected int timeUnitADay;
     protected int simulateSpeed;
-    protected boolean run;
-    protected int rounds;
+    protected boolean run = true;
+    protected int worldTimeUnit; //every round will increase by one
     protected int days;
+    protected  double mapWidth;
+    protected double mapHigh;
 
-    public SimulationApplication(int roundADay, double mapWidth,double mapHigh) {
-        this.roundADay = roundADay;
-        simulateSpeed=1;
+
+
+    public SimulationApplication(int timeUnitADay, double mapWidth,double mapHigh) {
+        this.timeUnitADay = timeUnitADay;
+        simulateSpeed=60;
+        this.mapWidth=mapWidth;
+        this.mapHigh=mapHigh;
+        executorBaseList=new ArrayList<>();
+        map=new SimulationMap(mapWidth,mapHigh);
+        reset();
+    }
+
+    public void reset(){
         executorBaseList=new ArrayList<>();
         map=new SimulationMap(mapWidth,mapHigh);
 
@@ -36,53 +58,121 @@ public class SimulationApplication {
         virusManager=new VirusManager();
 
         List<AreaBase> buildings=entityGenerator.generateBuilding();
-//        List<PeopleBase> people=entityGenerator.generatePeople(buildings);
-//        List<VirusBase> virus=entityGenerator.generateVirus(people);
-
         areaManger.addAreas(buildings);
-//        peopleManger.addPeople(people);
-//        virusManager.addVirus(virus);
-//        executorBaseList.add(peopleManger.createExecutor());
-//        executorBaseList.add(virusManager.createExecutor());
+        List<PeopleBase> people=entityGenerator.generatePeople(areaManger);
+
+        peopleManger.addPeople(people);
+
+        List<VirusBase> virus=entityGenerator.generateVirus(peopleManger);
+        virusManager.addVirus(virus);
+        executorBaseList.add(peopleManger.createExecutor());
+        executorBaseList.add(virusManager.createExecutor());
+        days=0;
+        worldTimeUnit=0;
+        run = true;
+        DataRecord.getkFactor().clear();
     }
 
     public Time getTime(){
-        int dayTime=rounds%roundADay;
-        if(dayTime<roundADay/4){
+        int dayTime=worldTimeUnit%timeUnitADay;
+        if(dayTime<timeUnitADay/4.0){
             return  Time.MORNING;
-        }else if(dayTime<roundADay/2){
+        }else if(dayTime<timeUnitADay/2.0){
             return  Time.AFTERNOON;
-        }else if(dayTime<roundADay*3/4){
+        }else if(dayTime<timeUnitADay*3.0/4){
             return Time.NIGHT;
         }else {
             return Time.MIDNIGHT;
         }
     }
 
-    public void run(){
+
+    public Week getWeek(){
+        int week=days%7;
+        switch (week){
+            case 0:
+                return Week.MON;
+            case 1:
+                return Week.TUE;
+            case 2:
+                return Week.WES;
+            case 3:
+                return Week.THU;
+            case 4:
+                return Week.FRI;
+            case 5:
+                return Week.SAT;
+            case 6:
+                return Week.SUN;
+            default:
+        }
+        return null;
+    }
+
+    public void start(){
         while (true){
             try {
                 Thread.sleep(1000/simulateSpeed);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             if(run){
-                rounds++;
-                int dayTime=rounds%roundADay;
+                worldTimeUnit++;
+                int dayTime=worldTimeUnit%timeUnitADay;
                 map.setCurrentTime(getTime());
-                if(dayTime==0){
+
+                // 3:00am refresh
+                if(dayTime==timeUnitADay*7.0/8){
                     days++;
                     for (ExecutorBase executorBase:executorBaseList){
                         executorBase.daySchedule();
                     }
+                    // 5 and 6 is weekends
+                    if(days%7>=5){
+                        for (ExecutorBase executorBase:executorBaseList){
+                            executorBase.weekendsSchedule();
+                        }
+                    }
                 }
+                //Record data
+                if(worldTimeUnit%10==0){
+                    DataRecord.addKFactorRecord(virusManager.getKFactor());
+                }
+                //Run virus and people move
                 for (ExecutorBase executorBase:executorBaseList){
                     executorBase.roundSchedule();
                 }
                 //render windows
+                windows.render();
             }
         }
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public int getWorldTimeUnit() {
+        return worldTimeUnit;
+    }
+
+    public void setWorldTimeUnit(int worldTimeUnit) {
+        this.worldTimeUnit = worldTimeUnit;
+    }
+
+    public void run(){
+        run=true;
+    }
+    public void stop(){
+        run=false;
+    }
+
+    public SimulationApplicationWindows getWindows() {
+        return windows;
+    }
+
+    public void setWindows(SimulationApplicationWindows windows) {
+        this.windows = windows;
     }
 
     public AreaManger getAreaManger() {
@@ -101,9 +191,37 @@ public class SimulationApplication {
         return map;
     }
 
+
+    public int getSimulateSpeed() {
+        return simulateSpeed;
+    }
+
+    public void setSimulateSpeed(int simulateSpeed) {
+        this.simulateSpeed = simulateSpeed;
+        if(simulateSpeed>1000){
+            double timeZoom=1-((simulateSpeed-1000)*0.0005);
+            if(timeZoom<0.1) timeZoom=0.1;
+            BuildingBase.setTimeSpeedZoom(timeZoom);
+            PeopleBase.setTimeSpeedZoom(timeZoom);
+            timeUnitADay= (int) (timeUnitADay*timeZoom);
+        }
+    }
+
     public static void main(String[] args){
-        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,70,50);
-        simulationApplication.run();
+        setLevel(Log.APP_LEVEL);
+        SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
+        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-8, 50, 0.088);
+        simulationApplication.setWindows(windows);
+        simulationApplication.start();
+    }
+
+    public static void setLevel(Level targetLevel) {
+        Logger root = Logger.getLogger("");
+        root.setLevel(targetLevel);
+        for (Handler handler : root.getHandlers()) {
+            handler.setLevel(targetLevel);
+        }
+        System.out.println("level set: " + targetLevel.getName());
     }
 
 }

@@ -1,9 +1,11 @@
 package info6205.virus.simulation.gui;
 
 import info6205.virus.simulation.console.SimulationApplication;
+import info6205.virus.simulation.manager.PeopleManger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,21 +14,23 @@ public class SimulationApplicationWindows {
     private JPanel canvas;
     private JPanel mainPanel;
     private JButton runButton;
-    private JTextField textField1;
+    private JTextField speedText;
     private JButton settingButton;
+    private JLabel timeLabel;
+    private JLabel timeDayLabel;
+    private JLabel timeWeekLabel;
+    private JButton resetBtn;
+    private JButton statisticButton;
     private SimulationApplication simulationApplication;
     private SimulationRender render;
     private static Logger logger = Logger.getLogger(SimulationApplication.class.getName());
 
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
 
     public JPanel getCanvas() {
         return canvas;
     }
 
-    public SimulationApplicationWindows(SimulationApplication simulationApplication) {
+    public SimulationApplicationWindows(SimulationApplication simulationApplication, double xLTRealWorld, double yLTRealWorld, double zoom) {
         this.simulationApplication = simulationApplication;
         JFrame jFrame = new JFrame("VirusSimulation");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -35,21 +39,86 @@ public class SimulationApplicationWindows {
         jFrame.setVisible(true);
         jFrame.setLocation(dim.width / 2 - jFrame.getSize().width / 2, dim.height / 2 - jFrame.getSize().height / 2);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), -20, 70, 0.108);
+        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), xLTRealWorld, yLTRealWorld, zoom);
         logger.log(Level.INFO, "Start render.");
 
+        canvas.setBackground(Color.white);
+        MouseEvent mouseEvent = new MouseEvent(render, canvas);
+        canvas.addMouseListener(mouseEvent);
+        canvas.addMouseMotionListener(mouseEvent);
+        canvas.addMouseWheelListener(mouseEvent);
+//        mainPanel.addMouseListener(mouseEvent);
+//        jFrame.addMouseListener(mouseEvent);
+//        jFrame.addMouseMotionListener(mouseEvent);
+        runButton.addMouseListener(new MouseAdapter() {
+            private boolean run = true;
+
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (run) {
+                    simulationApplication.stop();
+                    runButton.setText("Run");
+                    run = false;
+                } else {
+                    simulationApplication.run();
+                    runButton.setText("Stop");
+                    run = true;
+                }
+            }
+        });
+        settingButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                new Setting(simulationApplication);
+            }
+        });
+        resetBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                simulationApplication.reset();
+            }
+        });
+        statisticButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                new Statistic();
+            }
+        });
+    }
+
+    public void windowRender() {
+        timeLabel.setText("" + simulationApplication.getTime());
+//        timeSecondLabel.setText("" + simulationApplication.getWorldTimeUnit());
+        timeDayLabel.setText("" + simulationApplication.getDays());
+        timeWeekLabel.setText("" + simulationApplication.getWeek());
     }
 
     public void render() {
         // Render AreaBase
+        windowRender();
         render.renderAreaBase(simulationApplication.getAreaManger().getRoadAreas(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getHouses(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getHospitals(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getMalls(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getOffices(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getParks(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getRestaurants(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
         render.renderAreaBase(simulationApplication.getAreaManger().getSchools(), canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
+        render.renderPeopleList(simulationApplication.getPeopleManger().getAdults(), canvas.getGraphics());
+        render.renderPeopleList(simulationApplication.getPeopleManger().getElders(), canvas.getGraphics());
+        render.renderPeopleList(simulationApplication.getPeopleManger().getTeens(), canvas.getGraphics());
+        render.drawCoordinate(canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
+        PeopleManger peopleManger = simulationApplication.getPeopleManger();
+        render.renderInfectedPanel(canvas.getWidth() - 500, 10, 500, peopleManger.getInfectedTeenCount(), peopleManger.getInfectedAdultCount(), peopleManger.getInfectedElderCount(), canvas.getGraphics());
     }
 
 
@@ -82,60 +151,146 @@ public class SimulationApplicationWindows {
         mainPanel.add(panel1, BorderLayout.SOUTH);
         runButton = new JButton();
         runButton.setPreferredSize(new Dimension(150, 30));
-        runButton.setText("Run");
+        runButton.setText("Stop");
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
+        gbc.gridx = 13;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(runButton, gbc);
         final JPanel spacer1 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
+        gbc.gridx = 14;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(spacer1, gbc);
         final JPanel spacer2 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
+        gbc.gridx = 13;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(spacer2, gbc);
-        final JLabel label1 = new JLabel();
-        label1.setText("Speed:");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel1.add(label1, gbc);
-        textField1 = new JTextField();
-        textField1.setPreferredSize(new Dimension(100, 30));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(textField1, gbc);
         settingButton = new JButton();
         settingButton.setPreferredSize(new Dimension(150, 30));
         settingButton.setText("Setting");
         gbc = new GridBagConstraints();
-        gbc.gridx = 6;
+        gbc.gridx = 17;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(settingButton, gbc);
         final JPanel spacer3 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 15;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(spacer3, gbc);
+        final JLabel label1 = new JLabel();
+        label1.setText("Time:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 8;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(label1, gbc);
         final JPanel spacer4 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 9;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer4, gbc);
+        final JPanel spacer5 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 12;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer5, gbc);
+        timeLabel = new JLabel();
+        timeLabel.setMinimumSize(new Dimension(80, 16));
+        timeLabel.setPreferredSize(new Dimension(80, 16));
+        timeLabel.setText("");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 10;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(timeLabel, gbc);
+        final JPanel spacer6 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 11;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer6, gbc);
+        final JLabel label2 = new JLabel();
+        label2.setText("Days:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(label2, gbc);
+        final JPanel spacer7 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 5;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer4, gbc);
+        panel1.add(spacer7, gbc);
+        timeDayLabel = new JLabel();
+        timeDayLabel.setMaximumSize(new Dimension(50, 16));
+        timeDayLabel.setMinimumSize(new Dimension(50, 16));
+        timeDayLabel.setPreferredSize(new Dimension(50, 16));
+        timeDayLabel.setText("");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 6;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(timeDayLabel, gbc);
+        final JPanel spacer8 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 7;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer8, gbc);
+        final JLabel label3 = new JLabel();
+        label3.setText("Week:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(label3, gbc);
+        final JPanel spacer9 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer9, gbc);
+        final JPanel spacer10 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer10, gbc);
+        timeWeekLabel = new JLabel();
+        timeWeekLabel.setMinimumSize(new Dimension(50, 16));
+        timeWeekLabel.setPreferredSize(new Dimension(50, 16));
+        timeWeekLabel.setText("");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(timeWeekLabel, gbc);
+        resetBtn = new JButton();
+        resetBtn.setPreferredSize(new Dimension(150, 30));
+        resetBtn.setText("Reset");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 18;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(resetBtn, gbc);
+        statisticButton = new JButton();
+        statisticButton.setPreferredSize(new Dimension(150, 30));
+        statisticButton.setText("Statistic");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 16;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(statisticButton, gbc);
     }
 
     /**

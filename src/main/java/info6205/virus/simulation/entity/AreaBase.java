@@ -30,15 +30,15 @@ public abstract class AreaBase {
 
     public abstract GridElement getRandomWalkableGridElement();
     public GridElement getRandomGridElement(){
-        double x=random.nextDouble()*(rightDownX-leftUpX)+leftUpX;
-        double y=random.nextDouble()*(leftUpY-rightDownY)+rightDownY;
-        GridElement element=null;
-        try {
-            element=map.getGridElimentByXY(x,y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return element;
+        int high=area.size();
+        int width=area.get(0).size();
+        int y=random.nextInt(high);
+        int x=random.nextInt(width);
+        return area.get(y).get(x);
+    }
+
+    public SimulationMap getMap() {
+        return map;
     }
 
     public double getWidth(){

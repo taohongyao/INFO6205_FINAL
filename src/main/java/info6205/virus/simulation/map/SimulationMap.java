@@ -1,21 +1,23 @@
 package info6205.virus.simulation.map;
 
 import info6205.virus.simulation.entity.AreaBase;
+import info6205.virus.simulation.logger.Debug;
+import info6205.virus.simulation.logger.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SimulationMap {
     private double width;
     private double high;
-    private int divEveryMeter;
+    private double divEveryMeter;
     private Time currentTime;
     private List<List<GridElement>> grids;
 
 
     private static Logger logger=Logger.getLogger(SimulationMap.class.getName());
+
     public SimulationMap(double width, double high) {
         this.width = width;
         this.high = high;
@@ -28,7 +30,7 @@ public class SimulationMap {
             }
             grids.add(list);
         }
-        logger.log(Level.INFO,String.join(" ","High:",""+grids.size(),"Width:",""+grids.get(0).size()));
+        logger.log(Log.DEBUG,String.join(" ","High:",""+grids.size(),"Width:",""+grids.get(0).size()));
     }
 
     public GridElement getGridElimentByXY(double x,double y) throws Exception {
@@ -53,8 +55,33 @@ public class SimulationMap {
         return subGrids;
     }
 
+    public List<GridElement> getAdjacentElements(GridElement gridElement){
+        List<GridElement> list=new ArrayList<>();
+        int x=gridElement.getMapXIndex();
+        int y=gridElement.getMapYIndex();
+        int elementsWidth=grids.get(0).size();
+        int elementsHigh=grids.size();
+        int leftX=x-1;
+        int rightX=x+1;
+        int upY=y+1;
+        int downY=y-1;
+        if(leftX>=0){
+            list.add(grids.get(y).get(leftX));
+        }
+        if(rightX<elementsWidth){
+            list.add(grids.get(y).get(rightX));
+        }
+        if(upY<elementsHigh){
+            list.add(grids.get(upY).get(x));
+        }
+        if(downY>=0){
+            list.add(grids.get(downY).get(x));
+        }
+        return  list;
+    }
+
     public List<List<GridElement>> getSubGridsAndBindArea(double xLeftUp, double yLeftUp, double xRightDown, double yRightDown, AreaBase areaBase){
-        logger.info(String.join(" ","xLU:"+xLeftUp,", yLU:"+yLeftUp,", xRD:"+xRightDown,", yRightDown"+yRightDown));
+        logger.log(Log.DEBUG,String.join(" ","xLU:"+xLeftUp,", yLU:"+yLeftUp,", xRD:"+xRightDown,", yRightDown"+yRightDown));
         List<List<GridElement>> subGrids=new ArrayList<>();
         int xLeftUpInt=(int)Math.round(xLeftUp*divEveryMeter);
         int yLeftUpInt=(int)Math.round(yLeftUp*divEveryMeter);
@@ -69,7 +96,7 @@ public class SimulationMap {
             }
             subGrids.add(list);
         }
-        logger.log(Level.INFO,"SubGrides size: "+subGrids.size());
+        logger.log(Log.DEBUG,"SubGrides size: "+subGrids.size());
         return subGrids;
     }
 
@@ -97,12 +124,11 @@ public class SimulationMap {
         this.high = high;
     }
 
-    public int getDivEveryMeter() {
+    public double getDivEveryMeter() {
         return divEveryMeter;
     }
 
-    public void setDivEveryMeter(int divEveryMeter) {
+    public void setDivEveryMeter(double divEveryMeter) {
         this.divEveryMeter = divEveryMeter;
     }
-
 }

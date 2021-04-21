@@ -5,31 +5,40 @@ import info6205.virus.simulation.entity.Direction;
 import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.entity.RoadArea;
 import info6205.virus.simulation.entity.building.BuildingBase;
+import info6205.virus.simulation.manager.AreaManger;
 import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
+import info6205.virus.simulation.util.GridElementUtil;
 import info6205.virus.simulation.util.RoadAreaUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 public class MoveInRoadTask extends MoveTask{
     protected BuildingBase buildingBase;
     protected Queue<RoadArea> path;
+    protected int timesInSameArea;
+    protected AreaManger areaManger;
     protected boolean start=true;
 
-    public MoveInRoadTask(double speed,BuildingBase des) {
+    public MoveInRoadTask(double speed,BuildingBase des,AreaManger areaManger) {
         super(0, speed, 0);
         this.buildingBase=des;
+        this.areaManger=areaManger;
     }
 
-    public MoveInRoadTask(double socialDistance, double speed, double keepSocialDistanceRate,BuildingBase des) {
+    public MoveInRoadTask(double socialDistance, double speed, double keepSocialDistanceRate,BuildingBase des,AreaManger areaManger) {
         super(socialDistance, speed, keepSocialDistanceRate);
         this.buildingBase=des;
+        this.areaManger=areaManger;
     }
 
-    public MoveInRoadTask(double socialDistance, double speed, Long walkSeed, double keepSocialDistanceRate,BuildingBase des) {
+    public MoveInRoadTask(double socialDistance, double speed, Long walkSeed, double keepSocialDistanceRate,BuildingBase des,AreaManger areaManger) {
         super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
         this.buildingBase=des;
+        this.areaManger=areaManger;
     }
 
     public Queue<RoadArea> getPath() {
@@ -40,20 +49,16 @@ public class MoveInRoadTask extends MoveTask{
         this.path = path;
     }
 
-    public double getRandomSpeed(){
-        return speed*(1-0.2*getRandom().nextDouble());
-    }
-
-    private BuildingBase getCurrentBuildingBase(PeopleBase peopleBase){
-        GridElement gridElement=peopleBase.getLocation();
-        for (AreaBase areaBase:gridElement.getAreas()){
-            if(areaBase instanceof BuildingBase){
-                return (BuildingBase) areaBase;
-            }
-        }
-        return null;
-    }
-
+    //    private BuildingBase getCurrentBuildingBase(PeopleBase peopleBase){
+//        GridElement gridElement=peopleBase.getLocation();
+//        for (AreaBase areaBase:gridElement.getAreas()){
+//            if(areaBase instanceof BuildingBase){
+//                return (BuildingBase) areaBase;
+//            }
+//        }
+//        return null;
+//    }
+//
     private RoadArea getPeopleRoadArea(PeopleBase peopleBase){
         GridElement currentLocation=peopleBase.getLocation();
         for(AreaBase areaBase:currentLocation.getAreas()){
@@ -64,138 +69,200 @@ public class MoveInRoadTask extends MoveTask{
         return null;
     }
 
-    public void findPath(PeopleBase peopleBase){
-        BuildingBase buildingBase=getCurrentBuildingBase(peopleBase);
-        if(buildingBase!=null){
-            // leave to roadArea
-            GridElement location=buildingBase.getPublicArea().getRandomGridElement();
-            try {
-                peopleBase.moveToNextLocation(location.getRealX(), location.getRealY());
-                buildingBase.decreaseSizeByOne();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public void findPath(PeopleBase peopleBase) throws Exception {
+//        BuildingBase buildingBase=getCurrentBuildingBase(peopleBase);
+//        if(buildingBase!=null){
+//            // leave to roadArea
+//            GridElement location=buildingBase.getPublicArea().getRandomGridElement();
+//            try {
+//                peopleBase.moveToNextLocation(location);
+//                buildingBase.decreaseSizeByOne();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
         RoadArea src=getPeopleRoadArea(peopleBase);
         if(src!=null){
-            try {
                 path= (Queue<RoadArea>) RoadAreaUtil.findPath(src,buildingBase.getPublicArea());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+        }else {
+            throw new RuntimeException("Not in the walkable place");
         }
+    }
+    public boolean moveInNotDesOrSrcArea(GridElement nexLocation,PeopleBase peopleBase){
+        RoadArea area=getPeopleRoadArea(peopleBase);
+        RoadArea des=path.peek();
+        RoadArea next=RoadAreaUtil.getRoadAreaByGrid(nexLocation);
+        if(next!=null&&(next.equals(area)||next.equals(des))){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void executeTask(PeopleBase peopleBase) {
         if(start){
-            findPath(peopleBase);
+            try {
+                findPath(peopleBase);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
             start=false;
         }
-
+        timesInSameArea++;
         RoadArea des=path.peek();
         if(peopleBase.getLocation().isArea(des)){
             path.poll();
             des=path.peek();
+            timesInSameArea=0;
             if(des==null){
                 finish();
                 return;
             }
         }
+        if(timesInSameArea>60*3){
+            reScheduleTask(peopleBase);
+            finish();
+            return;
+        }
 
         SimulationMap map=peopleBase.getMap();
+        int maxFindNextLocationTimes=10;
+        boolean avoidTooClose=false;
+        RoadAreaUtil.getRoadAreaByGrid(peopleBase.getLocation());
+        while (maxFindNextLocationTimes!=0){
+            Double nextX;
+            Double nextY;
 
-        try {
-            int maxFindNextLocationTimes=5;
-            while (maxFindNextLocationTimes!=0){
-
-                RoadArea currentArea= peopleBase.getCurrentRoadArea();
-                Direction direction=currentArea.getDirectionOfRoadArea(des);
-                double xOffset=0;
-                double yOffset=0;
-
-                // random walk when go to the destination
-                switch (direction){
-                    case NORTH:
-                        yOffset=getRandomSpeed();
-                        break;
-                    case SOUTH:
-                        yOffset=-getRandomSpeed();
-                        break;
-                    case WEST:
-                        xOffset=-getRandomSpeed();
-                        break;
-                    case EAST:
-                        xOffset=getRandomSpeed();
-                        break;
-                    default:
-                }
-                double randomRate=0.5;
-                if(direction==Direction.NORTH||direction==Direction.SOUTH){
-                    if(peopleBase.getX()>des.getRightDownX()) {
-                        xOffset=-getRandomSpeed();
-                        yOffset=0;
-                    }else if(peopleBase.getX()<des.getLeftUpX()){
-                        xOffset=getRandomSpeed();
-                        yOffset=0;
-                    }else {
-                        xOffset=speed*randomRate*getRandom().nextDouble();
-                        if(getRandom().nextBoolean()){
-                            xOffset=-xOffset;
-                        }
-                    }
-                }else {
-                    if(peopleBase.getY()>des.getLeftUpY()) {
-                        yOffset=-getRandomSpeed();
-                        xOffset=0;
-                    }else if(peopleBase.getY()<des.getRightDownY()){
-                        yOffset=getRandomSpeed();
-                        xOffset=0;
-                    }else {
-                        yOffset=speed*randomRate*getRandom().nextDouble();
-                        if(getRandom().nextBoolean()){
-                            yOffset=-yOffset;
-                        }
-
-                    }
-                }
-
-                // TODO: 4/20/2021 SocialDistance Judge 
-                double nextX=peopleBase.getX()+xOffset;
-                double nextY=peopleBase.getY()+yOffset;
-                GridElement gridElement=null;
+            if(!avoidTooClose){
+                List<Double> xy=generateNextXY(peopleBase,path.peek());
+                nextX=xy.get(0);
+                nextY=xy.get(1);
+            }else {
+                List<Double> xy=avoidTooClose(peopleBase,path.peek());
+                nextX=xy.get(0);
+                nextY=xy.get(1);
+                avoidTooClose=false;
+            }
+            GridElement gridElement=null;
+            try {
                 gridElement=map.getGridElimentByXY(nextX,nextY);
-                if(gridElement.isWalkAble()){
-                    // Simulate keeping social Distance Rate
-                    if(getRandom().nextDouble()<getKeepSocialDistanceRate()){
-                        double xLeftUp=gridElement.getRealX()-socialDistance;
-                        double xRightDown=gridElement.getRealX()+socialDistance;
-                        double yLeftUp=gridElement.getRealY()-socialDistance;
-                        double yRightDown=gridElement.getRealY()+socialDistance;
-                        List<List<GridElement>> subGrids=map.getSubGrids(xLeftUp,yLeftUp,xRightDown,yRightDown);
-                        boolean havePeopleInSocialDistance=false;
-                        for(List<GridElement> gridElements:subGrids){
-                            for (GridElement gridElement1:gridElements){
-                                if(gridElement1.havePeople()){
-                                    havePeopleInSocialDistance=true;
-                                    break;
-                                }
-                            }
-                        }
-                        if(!havePeopleInSocialDistance){
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+            if(gridElement.isWalkAble()){
+                // since the generateNextXY policy which need to just go through N,S,W,E direction.
+                if(!moveInNotDesOrSrcArea(gridElement,peopleBase)){
+                    continue;
+                }
+                // Simulate keeping social Distance Rate
+                if(getRandom().nextDouble()<getKeepSocialDistanceRate()){
+                    if(GridElementUtil.isKeepSocialDistance(gridElement,peopleBase,peopleBase.getSocialDistance())){
+                        peopleBase.moveToNextLocation(nextX,nextY);
+                        break;
+                    }else {
+                        if(maxFindNextLocationTimes<0){
                             peopleBase.moveToNextLocation(nextX,nextY);
                             break;
                         }
-                    }else {
-                        peopleBase.moveToNextLocation(nextX,nextY);
-                        break;
+                        avoidTooClose=true;
                     }
+                }else {
+                    peopleBase.moveToNextLocation(nextX,nextY);
+                    break;
                 }
-                maxFindNextLocationTimes--;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            maxFindNextLocationTimes--;
         }
+    }
+
+    public void reScheduleTask(PeopleBase peopleBase){
+        peopleBase.cleanAllTasks();
+        peopleBase.addTask(new TasksGenerateTask(areaManger));
+    }
+
+    private List<Double> avoidTooClose(PeopleBase peopleBase,RoadArea des){
+        double xOffset=0;
+        double yOffset=0;
+        List<Double> coordination=new ArrayList<>();
+        RoadArea currentArea= peopleBase.getCurrentRoadArea();
+        Direction direction=currentArea.getDirectionOfRoadArea(des);
+        // random walk when go to the destination
+        if(getRandom().nextBoolean()){
+            xOffset=getSpeed()*2;
+            if(getRandom().nextBoolean()){
+                xOffset=-xOffset;
+            }
+        }else {
+            yOffset=getSpeed()*2;
+            if(getRandom().nextBoolean()){
+                yOffset=-yOffset;
+            }
+        }
+        double nextX=peopleBase.getX()+xOffset;
+        double nextY=peopleBase.getY()+yOffset;
+        coordination.add(nextX);
+        coordination.add(nextY);
+        return coordination;
+    }
+
+    private List<Double> generateNextXY(PeopleBase peopleBase,RoadArea des){
+        double xOffset=0;
+        double yOffset=0;
+        List<Double> coordination=new ArrayList<>();
+        RoadArea currentArea= peopleBase.getCurrentRoadArea();
+        Direction direction=currentArea.getDirectionOfRoadArea(des);
+        // random walk when go to the destination
+        switch (direction){
+            case NORTH:
+                yOffset=getRandomSpeed();
+                break;
+            case SOUTH:
+                yOffset=-getRandomSpeed();
+                break;
+            case WEST:
+                xOffset=-getRandomSpeed();
+                break;
+            case EAST:
+                xOffset=getRandomSpeed();
+                break;
+            default:
+        }
+        double randomRate=0.5;
+        if(direction==Direction.NORTH||direction==Direction.SOUTH){
+            if(peopleBase.getLocation().getRealX()>=des.getRightDownX()) {
+                xOffset=-getRandomSpeed();
+                yOffset=0;
+            }else if(peopleBase.getLocation().getRealX()<=des.getLeftUpX()){
+                xOffset=getRandomSpeed();
+                yOffset=0;
+            }else {
+                xOffset=speed*randomRate*getRandom().nextDouble();
+                if(getRandom().nextBoolean()){
+                    xOffset=-xOffset;
+                }
+            }
+        }else {
+            if(peopleBase.getLocation().getRealY()>=des.getLeftUpY()) {
+                yOffset=-getRandomSpeed();
+                xOffset=0;
+            }else if(peopleBase.getLocation().getRealY()<=des.getRightDownY()){
+                yOffset=getRandomSpeed();
+                xOffset=0;
+            }else {
+                yOffset=speed*randomRate*getRandom().nextDouble();
+                if(getRandom().nextBoolean()){
+                    yOffset=-yOffset;
+                }
+            }
+        }
+        double nextX=peopleBase.getX()+xOffset;
+        double nextY=peopleBase.getY()+yOffset;
+        coordination.add(nextX);
+        coordination.add(nextY);
+        return coordination;
     }
 }

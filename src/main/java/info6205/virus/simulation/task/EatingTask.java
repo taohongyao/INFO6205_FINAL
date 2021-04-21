@@ -7,25 +7,33 @@ import info6205.virus.simulation.entity.building.Restaurant;
 import info6205.virus.simulation.map.Time;
 
 public class EatingTask extends TaskBase{
+    enum Meal{
+        BREAKFAST,
+        DINNER,
+        LUNCH
+    }
+    private Meal mealType;
     private int timeToEnd;
     private boolean start=true;
 
-    public EatingTask(int eatingTime) {
+    public EatingTask(int eatingTime, Meal type) {
         timeToEnd=eatingTime;
+        this.mealType=type;
     }
     @Override
     public void executeTask(PeopleBase peopleBase) {
         if(start){
             Time currentTime=peopleBase.getMap().getCurrentTime();
-            switch (currentTime){
-                case NIGHT:
-                    peopleBase.setNeedToEatDinner(false);
-                    break;
-                case MORNING:
+            if(mealType!=null)
+            switch (mealType){
+                case BREAKFAST:
                     peopleBase.setNeedToEatBreakFast(false);
                     break;
-                case AFTERNOON:
+                case LUNCH:
                     peopleBase.setNeedToEatLunch(false);
+                    break;
+                case DINNER:
+                    peopleBase.setNeedToEatDinner(false);
                     break;
                 default:
             }

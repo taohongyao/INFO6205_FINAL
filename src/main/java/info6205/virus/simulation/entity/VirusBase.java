@@ -2,10 +2,7 @@ package info6205.virus.simulation.entity;
 
 import info6205.virus.simulation.map.GridElement;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class VirusBase {
     protected String id;
@@ -13,10 +10,16 @@ public abstract class VirusBase {
     protected double rFactor;
     protected int potentialDay;
     protected static Random random;
+    static {
+        random=new Random();
+    }
 
     protected PeopleBase peopleBase;
     protected GridElement location;
     protected int aliveDayWithoutPeople;
+
+    protected Map<PeopleBase,Integer> contactRecord;
+    protected Set<PeopleBase> infectRecord;
 
     abstract public VirusBase generate();
     abstract public List<VirusBase> findCarrierAndInfect();
@@ -27,8 +30,9 @@ public abstract class VirusBase {
         this.rFactor = rFactor;
         this.potentialDay=potentialDay;
         this.aliveDayWithoutPeople=aliveDayWithoutPeople;
-        random=new Random();
         id= UUID.randomUUID().toString();
+        infectRecord=new HashSet<>();
+        contactRecord=new HashMap<>();
     }
 
     public String getId() {
@@ -84,11 +88,11 @@ public abstract class VirusBase {
     }
 
     public void minusPotentialDay(){
-        if(potentialDay!=0) potentialDay--;
+        if(potentialDay!=0&& peopleBase!=null) potentialDay--;
     }
 
     public void minusAliveDay(){
-        if(aliveDayWithoutPeople!=0) aliveDayWithoutPeople--;
+        if(aliveDayWithoutPeople!=0&&haveAttachPlace()) aliveDayWithoutPeople--;
     }
 
     public boolean isAlive(){
@@ -114,6 +118,7 @@ public abstract class VirusBase {
     public void infectPeople(PeopleBase peopleBase){
         setPeopleBase(peopleBase);
         peopleBase.infectVirus(this);
+        recordInfectPeople(peopleBase);
     }
 
     public void attachInAbsolutePlace(GridElement gridElement){
@@ -131,6 +136,29 @@ public abstract class VirusBase {
             detachInAbsolutePlace();
         }else {
             leaveFromPeople();
+        }
+    }
+
+    public abstract void makeCarrierPeopleChangeState();
+
+    public Map<PeopleBase, Integer> getContactRecord() {
+        return contactRecord;
+    }
+
+    public Set<PeopleBase> getInfectRecord() {
+        return infectRecord;
+    }
+
+    private void recordInfectPeople(PeopleBase peopleBase){
+        infectRecord.add(peopleBase);
+    }
+
+    protected void recordContactPeople(PeopleBase peopleBase){
+        Integer count=contactRecord.get(peopleBase);
+        if(count==null){
+            contactRecord.put(peopleBase,1);
+        }else {
+            contactRecord.put(peopleBase,count+1);
         }
     }
 

@@ -3,6 +3,7 @@ package info6205.virus.simulation.entity;
 import info6205.virus.simulation.entity.building.House;
 import info6205.virus.simulation.entity.building.Office;
 import info6205.virus.simulation.entity.building.School;
+import info6205.virus.simulation.entity.virus.Covid19;
 import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.task.TaskBase;
@@ -15,11 +16,16 @@ public abstract class PeopleBase {
     protected double x;
     protected double y;
     protected List<VirusBase> virus;
-    protected MaskBase maskBase;
+    protected List<VirusBase> vaccine;
     protected Queue<TaskBase> tasks;
+    protected MaskBase maskBase;
     protected SimulationMap map;
+    protected static double timeSpeedZoom;
     protected int sleepTimeDuration=6*60*60;
     protected int eatingTimeDuration=20*60;
+    protected double walkSpeed=0.1;
+    protected double socialDistance=2;
+    protected double keepSocialDistanceRate=0.8;
 
     protected boolean needToEatBreakFast;
     protected boolean needToEatLunch;
@@ -28,10 +34,72 @@ public abstract class PeopleBase {
     protected boolean needToAfternoonWork;
     protected boolean needToSleep;
     protected boolean needToSchool;
+    protected boolean feelSick;
     protected House home;
     protected Office office;
     protected School school;
 
+    public PeopleBase(House home) {
+        id= UUID.randomUUID().toString();
+        virus =new ArrayList<>();
+        tasks=new LinkedList<>();
+        vaccine =new ArrayList<>();
+        this.home=home;
+        location=home.getRandomWalkableGridElement();
+        map=home.map;
+        x=location.getRealX();
+        y=location.getRealY();
+    }
+
+    public void weekendDailyRefresh(){
+        needToEatBreakFast=true;
+        needToEatLunch=true;
+        needToEatDinner=true;
+        needToMorningWork=false;
+        needToAfternoonWork=false;
+        needToSleep=true;
+        needToSchool=false;
+    }
+
+    public double getSocialDistance() {
+        return socialDistance;
+    }
+
+    public void setSocialDistance(double socialDistance) {
+        this.socialDistance = socialDistance;
+    }
+
+    public double getKeepSocialDistanceRate() {
+        return keepSocialDistanceRate;
+    }
+
+    public void setKeepSocialDistanceRate(double keepSocialDistanceRate) {
+        this.keepSocialDistanceRate = keepSocialDistanceRate;
+    }
+
+    public double getWalkSpeed() {
+        return walkSpeed;
+    }
+
+    public void setWalkSpeed(double walkSpeed) {
+        this.walkSpeed = walkSpeed;
+    }
+
+    public static double getTimeSpeedZoom() {
+        return timeSpeedZoom;
+    }
+
+    public static void setTimeSpeedZoom(double timeSpeedZoom) {
+        PeopleBase.timeSpeedZoom = timeSpeedZoom;
+    }
+
+    public boolean isFeelSick() {
+        return feelSick;
+    }
+
+    public void setFeelSick(boolean feelSick) {
+        this.feelSick = feelSick;
+    }
 
     public School getSchool() {
         return school;
@@ -66,7 +134,7 @@ public abstract class PeopleBase {
     }
 
     public int getEatingTimeDuration() {
-        return eatingTimeDuration;
+        return (int) (eatingTimeDuration*timeSpeedZoom);
     }
 
     public void setEatingTimeDuration(int eatingTimeDuration) {
@@ -74,7 +142,7 @@ public abstract class PeopleBase {
     }
 
     public int getSleepTimeDuration() {
-        return sleepTimeDuration;
+        return (int) (sleepTimeDuration*timeSpeedZoom);
     }
 
     public void setSleepTimeDuration(int sleepTimeDuration) {
@@ -129,11 +197,7 @@ public abstract class PeopleBase {
         this.needToSleep = needToSleep;
     }
 
-    public PeopleBase() {
-        id= UUID.randomUUID().toString();
-        virus =new ArrayList<>();
-        tasks=new LinkedList<>();
-    }
+
 
     public double getX() {
         return x;
@@ -159,6 +223,7 @@ public abstract class PeopleBase {
         }
         return null;
     }
+
 
     abstract public void DailyStatusRefresh();
 
@@ -194,6 +259,37 @@ public abstract class PeopleBase {
             i++;
         }
     }
+    public boolean isVaccine(){
+        for(VirusBase virusBase:vaccine){
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isVaccine(Object classType){
+        for(VirusBase virusBase:vaccine){
+            if(classType.getClass().isInstance(virusBase)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isInfected(){
+        for(VirusBase virusBase:virus){
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInfected(Object classType){
+        for(VirusBase virusBase:virus){
+            if(classType.getClass().isInstance(virusBase)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     //  Location operation--------------
     public GridElement getLocation() {
@@ -209,20 +305,39 @@ public abstract class PeopleBase {
     }
 
     private void setLocation(double x, double y) throws Exception {
+        GridElement location = map.getGridElimentByXY(x,y);
         setX(x);
         setY(y);
-        GridElement location = map.getGridElimentByXY(x,y);
+        this.location = location;
+        location.addPeople(this);
+    }
+    private void setLocation(GridElement location) throws Exception {
+        setX(location.getRealX());
+        setY(location.getRealY());
         this.location = location;
         location.addPeople(this);
     }
 
     // Move to next location
-    public void moveToNextLocation(double x, double y) throws Exception {
+    public void moveToNextLocation(double x, double y) {
         GridElement currentLocation=getLocation();
         if(currentLocation!=null){
             currentLocation.removePeople(this);
         }
-        setLocation(x,y);
+        try {
+            setLocation(x,y);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
+
+    public void moveToNextLocation(GridElement location) throws Exception {
+        GridElement currentLocation=getLocation();
+        if(currentLocation!=null){
+            currentLocation.removePeople(this);
+        }
+        setLocation(location);
     }
 
     //   Task Operation--------------------
@@ -245,6 +360,25 @@ public abstract class PeopleBase {
     public void deleteCurrentTask(){
         tasks.remove();
     }
+
+    public void exchangeCurrentTask(List<TaskBase> list){
+        LinkedList<TaskBase> castTasks= (LinkedList<TaskBase>) tasks;
+        castTasks.remove(0);
+        for (int i=list.size()-1;i>=0;i--){
+            castTasks.addFirst(list.get(i));
+        }
+    }
+
+    public boolean isAtHome(){
+        GridElement gridElement=getLocation();
+        for(AreaBase areaBase:gridElement.getAreas()){
+            if (areaBase instanceof House){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public boolean equals(Object o) {
