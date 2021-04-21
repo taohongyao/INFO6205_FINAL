@@ -17,6 +17,8 @@ public class Setting {
     private JTextField distanceText;
     private JTextField keepRateText;
     private JPanel mainPanel;
+    private JRadioButton cov19RadioButton;
+    private JRadioButton SARSRadioButton;
     private SimulationApplication simulationApplication;
 
 
@@ -82,6 +84,28 @@ public class Setting {
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(onRadioButton);
         buttonGroup.add(offRadioButton);
+
+
+        cov19RadioButton.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    simulationApplication.setVirusType(0);
+                }
+            }
+        });
+
+        SARSRadioButton.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    simulationApplication.setVirusType(1);
+                }
+            }
+        });
+        ButtonGroup buttonGroup2 = new ButtonGroup();
+        buttonGroup.add(cov19RadioButton);
+        buttonGroup.add(SARSRadioButton);
     }
 
 

@@ -30,6 +30,7 @@ public class SimulationApplication {
 
     protected int timeUnitADay;
     protected int simulateSpeed;
+    protected int virusType;
     protected boolean run = true;
     protected int worldTimeUnit; //every round will increase by one
     protected int days;
@@ -52,7 +53,7 @@ public class SimulationApplication {
         executorBaseList=new ArrayList<>();
         map=new SimulationMap(mapWidth,mapHigh);
 
-        EntityGenerator entityGenerator=new DemoGenerator(map);
+        EntityGenerator entityGenerator=new DemoGenerator(map,virusType);
         areaManger=new AreaManger();
         peopleManger=new PeopleManger();
         virusManager=new VirusManager();
@@ -191,6 +192,13 @@ public class SimulationApplication {
         return map;
     }
 
+    public int getVirusType() {
+        return virusType;
+    }
+
+    public void setVirusType(int virusType) {
+        this.virusType = virusType;
+    }
 
     public int getSimulateSpeed() {
         return simulateSpeed;

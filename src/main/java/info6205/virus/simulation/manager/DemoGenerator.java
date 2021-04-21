@@ -6,6 +6,7 @@ import info6205.virus.simulation.entity.people.Adult;
 import info6205.virus.simulation.entity.people.Elder;
 import info6205.virus.simulation.entity.people.Teen;
 import info6205.virus.simulation.entity.virus.Covid19;
+import info6205.virus.simulation.entity.virus.SARS;
 import info6205.virus.simulation.map.GridElement;
 import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.task.TasksGenerateTask;
@@ -17,8 +18,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DemoGenerator extends EntityGenerator{
-    public DemoGenerator(SimulationMap map) {
+    private int virusType;
+
+    public int getVirusType() {
+        return virusType;
+    }
+
+    public void setVirusType(int virusType) {
+        virusType = virusType;
+    }
+
+    public DemoGenerator(SimulationMap map,int virusType) {
         super(map);
+        this.virusType=virusType;
     }
 
     private static Logger logger=Logger.getLogger(DemoGenerator.class.getName());
@@ -397,25 +409,43 @@ public class DemoGenerator extends EntityGenerator{
         for(PeopleBase peopleBase:peopleManger.getAdults()){
             int range=random.nextInt(1000);
             if(range<100){
-                Covid19 covid19=new Covid19();
-                virusBaseList.add(covid19);
-                covid19.infectPeople(peopleBase);
+                if(virusType==0){
+                    Covid19 covid19=new Covid19();
+                    virusBaseList.add(covid19);
+                    covid19.infectPeople(peopleBase);
+                }else {
+                    SARS sars=new SARS();
+                    virusBaseList.add(sars);
+                    sars.infectPeople(peopleBase);
+                }
             }
         }
         for(PeopleBase peopleBase:peopleManger.getElders()){
             int range=random.nextInt(1000);
             if(range<100){
-                Covid19 covid19=new Covid19();
-                virusBaseList.add(covid19);
-                covid19.infectPeople(peopleBase);
+                if(virusType==0){
+                    Covid19 covid19=new Covid19();
+                    virusBaseList.add(covid19);
+                    covid19.infectPeople(peopleBase);
+                }else {
+                    SARS sars=new SARS();
+                    virusBaseList.add(sars);
+                    sars.infectPeople(peopleBase);
+                }
             }
         }
         for(PeopleBase peopleBase:peopleManger.getTeens()){
             int range=random.nextInt(1000);
             if(range<5){
-                Covid19 covid19=new Covid19();
-                virusBaseList.add(covid19);
-                covid19.infectPeople(peopleBase);
+                if(virusType==0){
+                    Covid19 covid19=new Covid19();
+                    virusBaseList.add(covid19);
+                    covid19.infectPeople(peopleBase);
+                }else {
+                    SARS sars=new SARS();
+                    virusBaseList.add(sars);
+                    sars.infectPeople(peopleBase);
+                }
             }
         }
         return virusBaseList;
