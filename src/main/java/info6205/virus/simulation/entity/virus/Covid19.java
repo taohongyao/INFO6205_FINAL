@@ -52,7 +52,7 @@ public class Covid19 extends VirusBase {
                             &&!people.isInfected(this)
                             &&!people.isVaccine(this)){
                         int range=random.nextInt(rateScala);
-                        if(range<infectRate*rateScala*0.5){
+                        if(range<infectRate*rateScala*0.5/dayActiveTimes){
                             Covid19 covid19= (Covid19) this.generate();
                             covid19.infectPeople(peopleBase);
                             list.add(covid19);
@@ -72,7 +72,7 @@ public class Covid19 extends VirusBase {
                             &&!people.isInfected()
                             &&!people.isVaccine()){
                         int range=random.nextInt(rateScala);
-                        if(range<infectRate*rateScala){
+                        if(range<infectRate*rateScala/dayActiveTimes){
                             Covid19 covid19= (Covid19) this.generate();
                             covid19.infectPeople(people);
                             list.add(covid19);

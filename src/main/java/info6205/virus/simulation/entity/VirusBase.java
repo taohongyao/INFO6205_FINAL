@@ -5,7 +5,8 @@ import info6205.virus.simulation.map.GridElement;
 import java.util.*;
 
 public abstract class VirusBase {
-    public static int rateScala=1000;
+    protected static int rateScala=1000;
+    protected static double dayActiveTimes=60*60*24;
     protected String id;
     protected double infectRate;
     protected int potentialDay;
@@ -36,6 +37,22 @@ public abstract class VirusBase {
         infectRecord=new HashSet<>();
         contactRecord=new HashMap<>();
         aliveDay=0;
+    }
+
+    public static double getDayActiveTimes() {
+        return dayActiveTimes;
+    }
+
+    public static void setDayActiveTimes(double dayActiveTimes) {
+        VirusBase.dayActiveTimes = dayActiveTimes;
+    }
+
+    public static int getRateScala() {
+        return rateScala;
+    }
+
+    public static void setRateScala(int rateScala) {
+        VirusBase.rateScala = rateScala;
     }
 
     public double getVaccineEfficacy() {

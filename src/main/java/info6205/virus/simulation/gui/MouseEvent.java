@@ -6,12 +6,14 @@ import java.awt.event.*;
 public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotionListener {
     private int pressX;
     private int pressY;
+    private SimulationApplicationWindows simulationApplicationWindows;
     private SimulationRender render;
     private JPanel canvas;
 
-    public MouseEvent(SimulationRender render, JPanel canvas) {
+    public MouseEvent(SimulationRender render, JPanel canvas,SimulationApplicationWindows simulationApplicationWindows) {
         this.render = render;
         this.canvas = canvas;
+        this.simulationApplicationWindows=simulationApplicationWindows;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotio
         int rotation=e.getWheelRotation();
         zoom=zoom+(rotation*0.003);
         render.setZoom(zoom);
-        render.cleanCanvas(canvas.getGraphics());
+        simulationApplicationWindows.refreshStaticGraph();
     }
 
     private void updateCross(java.awt.event.MouseEvent e){
@@ -66,7 +68,7 @@ public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotio
         int deltaY = y - pressY;
         render.setxLeftTopRealWorld(render.getxLeftTopRealWorld() - render.convert2RealWorldLength(deltaX));
         render.setyLeftTopRealWorld(render.getyLeftTopRealWorld() + render.convert2RealWorldLength(deltaY));
-        render.cleanCanvas(canvas.getGraphics());
+        simulationApplicationWindows.refreshStaticGraph();
     }
 
     @Override

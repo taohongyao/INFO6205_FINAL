@@ -3,9 +3,13 @@ package info6205.virus.simulation.gui;
 import info6205.virus.simulation.console.SimulationApplication;
 import info6205.virus.simulation.manager.PeopleManger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +30,7 @@ public class SimulationApplicationWindows {
     private static Logger logger = Logger.getLogger(SimulationApplication.class.getName());
     private Setting settingWindow;
     private Statistic statisticWindow;
+    private BufferedImage im;
 
 
     public JPanel getCanvas() {
@@ -47,7 +52,7 @@ public class SimulationApplicationWindows {
         statisticWindow = new Statistic();
 
         canvas.setBackground(Color.white);
-        MouseEvent mouseEvent = new MouseEvent(render, canvas);
+        MouseEvent mouseEvent = new MouseEvent(render, canvas, this);
         canvas.addMouseListener(mouseEvent);
         canvas.addMouseMotionListener(mouseEvent);
         canvas.addMouseWheelListener(mouseEvent);
@@ -88,6 +93,7 @@ public class SimulationApplicationWindows {
                 statisticWindow.show();
             }
         });
+        refreshStaticGraph();
     }
 
     public void windowRender() {
@@ -100,30 +106,55 @@ public class SimulationApplicationWindows {
     public void render() {
         // Render AreaBase
         windowRender();
-        render.renderAreaBase(simulationApplication.getAreaManger().getRoadAreas(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getHouses(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getHospitals(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getMalls(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getOffices(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getParks(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getRestaurants(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.renderAreaBase(simulationApplication.getAreaManger().getSchools(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
+//        render.cleanCanvas(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getRoadAreas(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getHouses(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getHospitals(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getMalls(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getOffices(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getParks(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getRestaurants(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+//        render.renderAreaBase(simulationApplication.getAreaManger().getSchools(), canvas.getGraphics());
+//        render.drawRecordLine(canvas.getGraphics());
+        painStaticGraph(canvas);
         render.renderPeopleList(simulationApplication.getPeopleManger().getAdults(), canvas.getGraphics());
         render.renderPeopleList(simulationApplication.getPeopleManger().getElders(), canvas.getGraphics());
         render.renderPeopleList(simulationApplication.getPeopleManger().getTeens(), canvas.getGraphics());
-        render.drawCoordinate(canvas.getGraphics());
+
         PeopleManger peopleManger = simulationApplication.getPeopleManger();
         render.renderInfectedPanel(canvas.getWidth() - 500, 10, 500, peopleManger.getInfectedTeenCount(), peopleManger.getInfectedAdultCount(), peopleManger.getInfectedElderCount(), canvas.getGraphics());
-        render.renderMouseOperationInfo(40, 10, canvas.getGraphics());
         render.drawRecordLine(canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
+
+    }
+
+    private void painStaticGraph(JPanel canvas) {
+        canvas.getGraphics().drawImage(im, 0, 0, canvas);
+    }
+
+    public void refreshStaticGraph() {
+        Container c = canvas;
+        im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics canvas = im.getGraphics();
+        render.cleanCanvas(canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getRoadAreas(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getHouses(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getHospitals(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getMalls(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getOffices(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getParks(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getRestaurants(), canvas);
+        render.renderAreaBase(simulationApplication.getAreaManger().getSchools(), canvas);
+        render.drawCoordinate(canvas);
+        render.renderMouseOperationInfo(40, 10, canvas);
+        canvas.dispose();
     }
 
 

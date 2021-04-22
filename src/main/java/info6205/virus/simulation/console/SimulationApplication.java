@@ -33,6 +33,7 @@ public class SimulationApplication {
 
 
     protected int timeUnitADay;
+    protected int initTimeUnitADay;
     protected int simulateSpeed;
     protected int virusType;
     protected boolean run = true;
@@ -45,11 +46,13 @@ public class SimulationApplication {
 
     public SimulationApplication(int timeUnitADay, double mapWidth,double mapHigh) {
         this.timeUnitADay = timeUnitADay;
+        initTimeUnitADay=timeUnitADay;
         simulateSpeed=60;
         this.mapWidth=mapWidth;
         this.mapHigh=mapHigh;
         executorBaseList=new ArrayList<>();
         map=new SimulationMap(mapWidth,mapHigh);
+        run = true;
         reset();
     }
 
@@ -74,7 +77,6 @@ public class SimulationApplication {
         executorBaseList.add(virusManager.createExecutor());
         days=0;
         worldTimeUnit=0;
-        run = true;
         DataRecord.getkFactor().clear();
     }
 
@@ -215,7 +217,13 @@ public class SimulationApplication {
             if(timeZoom<0.1) timeZoom=0.1;
             BuildingBase.setTimeSpeedZoom(timeZoom);
             PeopleBase.setTimeSpeedZoom(timeZoom);
-            timeUnitADay= (int) (timeUnitADay*timeZoom);
+            timeUnitADay= (int) (initTimeUnitADay*timeZoom);
+            VirusBase.setDayActiveTimes(timeUnitADay);
+        }else {
+            BuildingBase.setTimeSpeedZoom(1);
+            PeopleBase.setTimeSpeedZoom(1);
+            timeUnitADay= initTimeUnitADay;
+            VirusBase.setDayActiveTimes(timeUnitADay);
         }
     }
 

@@ -51,7 +51,7 @@ public class SARS extends VirusBase{
                             &&!people.isInfected(this)
                             &&!people.isVaccine(this)){
                         int range=random.nextInt(rateScala);
-                        if(range<infectRate*rateScala*0.5){
+                        if(range<infectRate*rateScala*0.5/dayActiveTimes){
                             SARS sars= (SARS) this.generate();
                             sars.infectPeople(peopleBase);
                             list.add(sars);
@@ -71,7 +71,7 @@ public class SARS extends VirusBase{
                             &&!people.isInfected()
                             &&!people.isVaccine()){
                         int range=random.nextInt(rateScala);
-                        if(range<infectRate*rateScala){
+                        if(range<infectRate*rateScala/dayActiveTimes){
                             SARS sars= (SARS) this.generate();
                             sars.infectPeople(people);
                             list.add(sars);

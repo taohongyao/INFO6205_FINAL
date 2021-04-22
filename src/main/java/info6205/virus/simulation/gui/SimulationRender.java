@@ -144,23 +144,23 @@ public class SimulationRender {
         }
     }
 
-    public void cleanLastCrossLine(Graphics g){
-        List<Integer> crossXY=record.get("CROSS");
-        if(crossXY!=null){
-            int x=crossXY.get(0);
-            int y=crossXY.get(1);
-            Graphics2D g2d= (Graphics2D) g;
-            g2d.setColor(Color.WHITE);
-            g2d.drawLine(0,y,widthCanvas,y);
-            g2d.drawLine(x,0,x,highCanvas);
-            g2d.fillRect(x,y-10,50,20);
-        }
-    }
+//    public void cleanLastCrossLine(Graphics g){
+//        List<Integer> crossXY=record.get("CROSS");
+//        if(crossXY!=null){
+//            int x=crossXY.get(0);
+//            int y=crossXY.get(1);
+//            Graphics2D g2d= (Graphics2D) g;
+//            g2d.setColor(Color.WHITE);
+//            g2d.drawLine(0,y,widthCanvas,y);
+//            g2d.drawLine(x,0,x,highCanvas);
+//            g2d.fillRect(x,y-10,50,20);
+//        }
+//    }
+
     public void drawRecordLine(Graphics g){
         synchronized (record){
             List<Integer> crossXY=record.get("CROSS");
             if(crossXY!=null){
-
                 int x=crossXY.get(0);
                 int y=crossXY.get(1);
                 Graphics2D g2d= (Graphics2D) g;
@@ -232,7 +232,7 @@ public class SimulationRender {
 
 
     public void renderCrossLine(int x,int y,Graphics g){
-        cleanLastCrossLine(g);
+//        cleanLastCrossLine(g);
         recordLastCrossLine(x,y);
     }
 
@@ -320,7 +320,7 @@ public class SimulationRender {
         int size=(int)(0.5/zoom);
         int x= (int)(convert2CanvasX(peopleBase.getX())-size/2.0);
         int y= (int)(convert2CanvasY(peopleBase.getY())-size/2.0);
-        cleanLastRender(peopleBase,g);
+//        cleanLastRender(peopleBase,g);
         putRecord(peopleBase,x,y,size);
 
         Graphics2D g2d = (Graphics2D) g;

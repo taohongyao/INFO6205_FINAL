@@ -131,17 +131,19 @@ public class MoveInRoadTask extends MoveTask{
         SimulationMap map=peopleBase.getMap();
         int maxFindNextLocationTimes=10;
         boolean avoidTooClose=false;
+        double speedScale=1;
+        int walkInForbidTimes=0;
         RoadAreaUtil.getRoadAreaByGrid(peopleBase.getLocation());
         while (maxFindNextLocationTimes!=0){
             Double nextX;
             Double nextY;
 
             if(!avoidTooClose){
-                List<Double> xy=generateNextXY(peopleBase,path.peek());
+                List<Double> xy=generateNextXY(peopleBase,path.peek(),speedScale);
                 nextX=xy.get(0);
                 nextY=xy.get(1);
             }else {
-                List<Double> xy=avoidTooClose(peopleBase,path.peek());
+                List<Double> xy=avoidTooClose(peopleBase,path.peek(),speedScale);
                 nextX=xy.get(0);
                 nextY=xy.get(1);
                 avoidTooClose=false;
@@ -150,12 +152,16 @@ public class MoveInRoadTask extends MoveTask{
             try {
                 gridElement=map.getGridElimentByXY(nextX,nextY);
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 continue;
             }
             if(gridElement.isWalkAble()){
                 // since the generateNextXY policy which need to just go through N,S,W,E direction.
                 if(!moveInNotDesOrSrcArea(gridElement,peopleBase)){
+                    walkInForbidTimes++;
+                    if(walkInForbidTimes>5){
+                        speedScale=speedScale*0.8;
+                    }
                     continue;
                 }
                 // Simulate keeping social Distance Rate
@@ -184,7 +190,7 @@ public class MoveInRoadTask extends MoveTask{
         peopleBase.addTask(new TasksGenerateTask(areaManger));
     }
 
-    private List<Double> avoidTooClose(PeopleBase peopleBase,RoadArea des){
+    private List<Double> avoidTooClose(PeopleBase peopleBase,RoadArea des,double speedScale){
         double xOffset=0;
         double yOffset=0;
         List<Double> coordination=new ArrayList<>();
@@ -202,6 +208,8 @@ public class MoveInRoadTask extends MoveTask{
                 yOffset=-yOffset;
             }
         }
+        xOffset=xOffset*speedScale;
+        yOffset=yOffset*speedScale;
         double nextX=peopleBase.getX()+xOffset;
         double nextY=peopleBase.getY()+yOffset;
         coordination.add(nextX);
@@ -209,7 +217,7 @@ public class MoveInRoadTask extends MoveTask{
         return coordination;
     }
 
-    private List<Double> generateNextXY(PeopleBase peopleBase,RoadArea des){
+    private List<Double> generateNextXY(PeopleBase peopleBase,RoadArea des,double speedScale){
         double xOffset=0;
         double yOffset=0;
         List<Double> coordination=new ArrayList<>();
@@ -259,6 +267,8 @@ public class MoveInRoadTask extends MoveTask{
                 }
             }
         }
+        xOffset=xOffset*speedScale;
+        yOffset=yOffset*speedScale;
         double nextX=peopleBase.getX()+xOffset;
         double nextY=peopleBase.getY()+yOffset;
         coordination.add(nextX);
