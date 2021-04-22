@@ -12,8 +12,11 @@ import java.util.Set;
 
 public class SARS extends VirusBase{
 
-    public SARS(double kFactor, double rFactor, int potentialDay, int aliveDay) {
-        super(kFactor, rFactor, potentialDay,aliveDay);
+    public SARS(double infectRate,double deadRate,double vaccineEfficacy, int potentialDay, int aliveDay) {
+        super(infectRate, potentialDay,aliveDay);
+        this.deadRate=deadRate;
+        this.vaccineEfficacy=deadRate;
+        this.deadRate=vaccineEfficacy;
     }
 
     @Override
@@ -24,12 +27,14 @@ public class SARS extends VirusBase{
     }
 
     public SARS() {
-        super(10, 10,7+getRandom().nextInt(7),7);
+        super(0.3,7+getRandom().nextInt(7),7);
+        vaccineEfficacy=0.9;
+        deadRate=0.5;
     }
 
     @Override
     public VirusBase generate() {
-        return new SARS();
+        return new SARS(infectRate,deadRate,vaccineEfficacy,potentialDay,aliveDay);
     }
 
     @Override
@@ -45,8 +50,8 @@ public class SARS extends VirusBase{
                     if((!maskBase.isWare()||maskBase.getEffective()<1)
                             &&!people.isInfected(this)
                             &&!people.isVaccine(this)){
-                        int range=random.nextInt(1000000);
-                        if(range<rFactor*0.5){
+                        int range=random.nextInt(rateScala);
+                        if(range<infectRate*rateScala*0.5){
                             SARS sars= (SARS) this.generate();
                             sars.infectPeople(peopleBase);
                             list.add(sars);
@@ -65,8 +70,8 @@ public class SARS extends VirusBase{
                     if((maskBase==null||!maskBase.isWare()||maskBase.getEffective()<1)
                             &&!people.isInfected()
                             &&!people.isVaccine()){
-                        int range=random.nextInt(1000);
-                        if(range<rFactor){
+                        int range=random.nextInt(rateScala);
+                        if(range<infectRate*rateScala){
                             SARS sars= (SARS) this.generate();
                             sars.infectPeople(people);
                             list.add(sars);

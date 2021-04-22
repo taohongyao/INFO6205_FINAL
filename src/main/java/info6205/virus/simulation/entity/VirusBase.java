@@ -5,10 +5,13 @@ import info6205.virus.simulation.map.GridElement;
 import java.util.*;
 
 public abstract class VirusBase {
+    public static int rateScala=1000;
     protected String id;
-    protected double kFactor;
-    protected double rFactor;
+    protected double infectRate;
     protected int potentialDay;
+    protected int aliveDay;
+    protected double vaccineEfficacy;
+    protected double deadRate;
     protected static Random random;
     static {
         random=new Random();
@@ -16,7 +19,7 @@ public abstract class VirusBase {
 
     protected PeopleBase peopleBase;
     protected GridElement location;
-    protected int aliveDayWithoutPeople;
+    protected int timeToDeadDayWithoutPeople;
 
     protected Map<PeopleBase,Integer> contactRecord;
     protected Set<PeopleBase> infectRecord;
@@ -25,14 +28,30 @@ public abstract class VirusBase {
     abstract public List<VirusBase> findCarrierAndInfect();
 
 
-    public VirusBase(double kFactor, double rFactor,int potentialDay,int aliveDayWithoutPeople) {
-        this.kFactor = kFactor;
-        this.rFactor = rFactor;
+    public VirusBase(double infectRate,int potentialDay,int timeToDeadDayWithoutPeople) {
+        this.infectRate = infectRate;
         this.potentialDay=potentialDay;
-        this.aliveDayWithoutPeople=aliveDayWithoutPeople;
+        this.timeToDeadDayWithoutPeople=timeToDeadDayWithoutPeople;
         id= UUID.randomUUID().toString();
         infectRecord=new HashSet<>();
         contactRecord=new HashMap<>();
+        aliveDay=0;
+    }
+
+    public double getVaccineEfficacy() {
+        return vaccineEfficacy;
+    }
+
+    public void setVaccineEfficacy(double vaccineEfficacy) {
+        this.vaccineEfficacy = vaccineEfficacy;
+    }
+
+    public double getDeadRate() {
+        return deadRate;
+    }
+
+    public void setDeadRate(double deadRate) {
+        this.deadRate = deadRate;
     }
 
     public String getId() {
@@ -71,33 +90,35 @@ public abstract class VirusBase {
     }
 
     //    set base virus info------------------
-    public double getkFactor() {
-        return kFactor;
+
+
+    public double getInfectRate() {
+        return infectRate;
     }
 
-    public void setkFactor(double kFactor) {
-        this.kFactor = kFactor;
-    }
-
-    public double getrFactor() {
-        return rFactor;
-    }
-
-    public void setrFactor(double rFactor) {
-        this.rFactor = rFactor;
+    public void setInfectRate(double infectRate) {
+        this.infectRate = infectRate;
     }
 
     public void minusPotentialDay(){
         if(potentialDay!=0&& peopleBase!=null) potentialDay--;
     }
-
-    public void minusAliveDay(){
-        if(aliveDayWithoutPeople!=0&&haveAttachPlace()) aliveDayWithoutPeople--;
+    public void minusAttachedVirusAliveDay(){
+        if(haveAttachPlace()&&timeToDeadDayWithoutPeople!=0){
+            timeToDeadDayWithoutPeople--;
+        }
+    }
+    public void aliveDayIncreaseOneDay(){
+        aliveDay++;
     }
 
-    public boolean isAlive(){
-        if(aliveDayWithoutPeople==0&&peopleBase!=null) return false;
-        return true;
+
+    public int getTimeToDeadDayWithoutPeople() {
+        return timeToDeadDayWithoutPeople;
+    }
+
+    public void setTimeToDeadDayWithoutPeople(int timeToDeadDayWithoutPeople) {
+        this.timeToDeadDayWithoutPeople = timeToDeadDayWithoutPeople;
     }
 
     public boolean isHaveSymptom(){
@@ -139,6 +160,15 @@ public abstract class VirusBase {
         }
     }
 
+    public boolean isAlive(){
+        if(haveAttachPlace()&&timeToDeadDayWithoutPeople>0){
+            return true;
+        }else if(haveInfectedInPeopleBody()){
+            return true;
+        }
+        return false;
+    }
+
     public abstract void makeCarrierPeopleChangeState();
 
     public Map<PeopleBase, Integer> getContactRecord() {
@@ -155,11 +185,14 @@ public abstract class VirusBase {
 
     protected void recordContactPeople(PeopleBase peopleBase){
         Integer count=contactRecord.get(peopleBase);
-        if(count==null){
-            contactRecord.put(peopleBase,1);
-        }else {
-            contactRecord.put(peopleBase,count+1);
+        if(!peopleBase.isInfected(this)){
+            if(count==null){
+                contactRecord.put(peopleBase,1);
+            }else {
+                contactRecord.put(peopleBase,count+1);
+            }
         }
+
     }
 
     @Override

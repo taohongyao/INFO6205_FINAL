@@ -12,7 +12,11 @@ import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.map.Time;
 import info6205.virus.simulation.map.Week;
 import info6205.virus.simulation.record.DataRecord;
+import org.ini4j.Wini;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Handler;
@@ -215,8 +219,27 @@ public class SimulationApplication {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException, URISyntaxException {
         setLevel(Log.APP_LEVEL);
+        Wini ini=new Wini(new File(new File(SimulationApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath()+File.separator+"config.ini"));
+        iniStart(ini);
+    }
+
+    public static void iniStart(Wini ini){
+        int timeUnitADay=Integer.parseInt(ini.fetch("simulate","timeUnitADay"));
+        int mapWidth=Integer.parseInt(ini.fetch("simulate","mapWidth"));
+        int mapHigh=Integer.parseInt(ini.fetch("simulate","mapHigh"));
+        double xViewPointInRealWorld=Double.parseDouble(ini.fetch("simulate","xViewPointInRealWorld"));
+        double yViewPointInRealWorld=Double.parseDouble(ini.fetch("simulate","yViewPointInRealWorld"));
+        double viewZoom=Double.parseDouble(ini.fetch("simulate","viewZoom"));
+
+        SimulationApplication simulationApplication=new SimulationApplication(timeUnitADay,mapWidth,mapHigh);
+        SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,xViewPointInRealWorld, yViewPointInRealWorld, viewZoom);
+        simulationApplication.setWindows(windows);
+        simulationApplication.start();
+    }
+
+    public static void defaultStart(){
         SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-8, 50, 0.088);
         simulationApplication.setWindows(windows);

@@ -6,6 +6,13 @@ import info6205.virus.simulation.entity.building.Office;
 
 public class Adult extends PeopleBase {
 
+
+    public Adult(int sleepTimeDuration, int eatingTimeDuration, double walkSpeed, double socialDistance, double keepSocialDistanceRate, House home, Office office) {
+        super(sleepTimeDuration, eatingTimeDuration, walkSpeed, socialDistance, keepSocialDistanceRate, home);
+        this.office=office;
+        DailyStatusRefresh();
+    }
+
     public Adult(House house, Office office) {
         super(house);
         this.office=office;

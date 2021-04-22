@@ -130,7 +130,7 @@ public class TasksGenerateTask extends TaskBase{
         try {
             MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, house,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(house,areaManger);
-            RandomWalkTask randomWalkTask=new RandomWalkTask(0,defaultSettingSpeed,0,house.getTaskTime());
+            RandomWalkTask randomWalkTask=new RandomWalkTask(house.getTaskTime(),false);
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
             peopleBase.addTask(new LeaveBuildingTask());
@@ -185,7 +185,7 @@ public class TasksGenerateTask extends TaskBase{
         try {
             MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, school,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(school,areaManger);
-            RandomWalkTask randomWalkTask=new RandomWalkTask(socialDistance,defaultSettingSpeed,socialDistanceKeepRate,school.getTaskTime());
+            RandomWalkTask randomWalkTask=new RandomWalkTask(school.getTaskTime(),false);
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
             peopleBase.addTask(new LeaveBuildingTask());
@@ -204,7 +204,7 @@ public class TasksGenerateTask extends TaskBase{
         try {
             MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, buildingBase,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(buildingBase,areaManger);
-            RandomWalkTask randomWalkTask=new RandomWalkTask(socialDistance,defaultSettingSpeed,socialDistanceKeepRate,buildingBase.getTaskTime());
+            RandomWalkTask randomWalkTask=new RandomWalkTask(buildingBase.getTaskTime(),false);
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
             peopleBase.addTask(new LeaveBuildingTask());
@@ -224,11 +224,8 @@ public class TasksGenerateTask extends TaskBase{
             MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, buildingBase,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(buildingBase,areaManger);
             RandomWalkTask randomWalkTask=null;
-            if(!applySocialDistance){
-                randomWalkTask=new RandomWalkTask(0,defaultSettingSpeed,0,buildingBase.getTaskTime());
-            }else {
-                randomWalkTask=new RandomWalkTask(socialDistance,defaultSettingSpeed,socialDistanceKeepRate,buildingBase.getTaskTime());
-            }
+            randomWalkTask=new RandomWalkTask(buildingBase.getTaskTime(),applySocialDistance);
+
 
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
