@@ -209,7 +209,7 @@ public class Setting {
         gbc.anchor = GridBagConstraints.WEST;
         mainPanel.add(label4, gbc);
         distanceText = new JTextField();
-        distanceText.setText("3");
+        distanceText.setText("2");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 7;

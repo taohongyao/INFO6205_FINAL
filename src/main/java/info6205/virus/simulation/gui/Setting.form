@@ -102,7 +102,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="3"/>
+          <text value="2"/>
         </properties>
       </component>
       <component id="3b99c" class="javax.swing.JTextField" binding="keepRateText">
