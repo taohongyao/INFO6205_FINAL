@@ -219,10 +219,20 @@ public class SimulationApplication {
         }
     }
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) {
         setLevel(Log.APP_LEVEL);
-        Wini ini=new Wini(new File(new File(SimulationApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath()+File.separator+"config.ini"));
-        iniStart(ini);
+        Wini ini= null;
+        try {
+            ini = new Wini(new File(new File(SimulationApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath()+File.separator+"config.ini"));
+            iniStart(ini);
+        } catch (IOException e) {
+            e.printStackTrace();
+            defaultStart();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            defaultStart();
+        }
+
     }
 
     public static void iniStart(Wini ini){
