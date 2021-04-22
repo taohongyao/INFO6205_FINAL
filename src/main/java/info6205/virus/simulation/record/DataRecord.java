@@ -11,7 +11,9 @@ public class DataRecord {
         List<Double> point=new ArrayList<>();
         point.add(x);
         point.add(y);
-        kFactor.add(point);
+        synchronized (kFactor){
+            kFactor.add(point);
+        }
     }
 
     public static void addKFactorRecord(double y){

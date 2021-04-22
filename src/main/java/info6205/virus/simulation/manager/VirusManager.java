@@ -43,8 +43,8 @@ public class VirusManager extends ManagerBase{
                 }
             }
             i+=subi;
-            if(subi==0) subi=100;
-            c+=(0.0+base.getInfectRecord().size()/subi);
+            if(subi==0) subi=1;
+            c+=((0.0+base.getInfectRecord().size())/subi);
         }
         return i*c/peopleInfectedVirus.size();
     }

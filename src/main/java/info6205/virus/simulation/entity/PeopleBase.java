@@ -20,12 +20,13 @@ public abstract class PeopleBase {
     protected Queue<TaskBase> tasks;
     protected MaskBase maskBase;
     protected SimulationMap map;
-    protected static double timeSpeedZoom;
+    protected static double timeSpeedZoom=1;
     protected int sleepTimeDuration=6*60*60;
     protected int eatingTimeDuration=20*60;
-    protected double walkSpeed=0.1;
+    protected double walkSpeed=0.2;
     protected double socialDistance=2;
     protected double keepSocialDistanceRate=0.8;
+    protected boolean isAlive=true;
 
     protected boolean needToEatBreakFast;
     protected boolean needToEatLunch;
@@ -38,17 +39,32 @@ public abstract class PeopleBase {
     protected House home;
     protected Office office;
     protected School school;
+    protected static Random random=new Random();
 
-    public PeopleBase(House home) {
+    public void initial(){
         id= UUID.randomUUID().toString();
         virus =new ArrayList<>();
         tasks=new LinkedList<>();
         vaccine =new ArrayList<>();
-        this.home=home;
         location=home.getRandomWalkableGridElement();
         map=home.map;
         x=location.getRealX();
         y=location.getRealY();
+    }
+
+    public PeopleBase(House home) {
+        this.home=home;
+        initial();
+    }
+
+    public PeopleBase(int sleepTimeDuration, int eatingTimeDuration, double walkSpeed, double socialDistance, double keepSocialDistanceRate, House home) {
+        this.sleepTimeDuration = sleepTimeDuration;
+        this.eatingTimeDuration = eatingTimeDuration;
+        this.walkSpeed = walkSpeed;
+        this.socialDistance = socialDistance;
+        this.keepSocialDistanceRate = keepSocialDistanceRate;
+        this.home = home;
+        initial();
     }
 
     public void weekendDailyRefresh(){
@@ -59,6 +75,11 @@ public abstract class PeopleBase {
         needToAfternoonWork=false;
         needToSleep=true;
         needToSchool=false;
+    }
+
+    public double getRandomSpeed(){
+        double speed=getWalkSpeed()*(1-0.3*random.nextDouble());
+        return speed;
     }
 
     public double getSocialDistance() {
@@ -78,7 +99,7 @@ public abstract class PeopleBase {
     }
 
     public double getWalkSpeed() {
-        return walkSpeed;
+        return walkSpeed/timeSpeedZoom;
     }
 
     public void setWalkSpeed(double walkSpeed) {
@@ -227,6 +248,14 @@ public abstract class PeopleBase {
 
     abstract public void DailyStatusRefresh();
 
+    public void dead(){
+        isAlive=false;
+    }
+
+    public void revive(){
+        isAlive=true;
+    }
+
     public SimulationMap getMap() {
         return map;
     }
@@ -367,6 +396,10 @@ public abstract class PeopleBase {
         for (int i=list.size()-1;i>=0;i--){
             castTasks.addFirst(list.get(i));
         }
+    }
+
+    public void addVaccine(VirusBase virusBase){
+        vaccine.add(virusBase);
     }
 
     public boolean isAtHome(){

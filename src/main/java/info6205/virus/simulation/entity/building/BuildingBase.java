@@ -30,6 +30,8 @@ public class BuildingBase extends AreaBase {
     protected double rightDownXBuildingWall;
     protected double rightDownYBuildingWall;
 
+
+
     @Override
     public void gridElementsInitial(List<List<GridElement>> area) {
         publicArea=new RoadArea(leftUpXPublicArea,leftUpYPublicArea,rightDownXPublicArea,rightDownYPublicArea,map);
@@ -64,10 +66,7 @@ public class BuildingBase extends AreaBase {
         return getBuildingPrivateArea().get(y).get(x);
     }
 
-    public BuildingBase(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction,double width) {
-        super(leftUpX, leftUpY, rightDownX, rightDownY, map);
-        this.direction=direction;
-        this.publicAreaWidth=width;
+    public void initial(){
         leftUpXPublicArea=leftUpX;
         leftUpYPublicArea=leftUpY;
         rightDownXPublicArea=rightDownX;
@@ -98,6 +97,22 @@ public class BuildingBase extends AreaBase {
         }
         gridElementsInitial(getArea());
     }
+
+    public BuildingBase(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction,double width, int taskTime) {
+        super(leftUpX, leftUpY, rightDownX, rightDownY, map);
+        this.direction=direction;
+        this.publicAreaWidth=width;
+        this.taskTime = taskTime;
+        initial();
+    }
+
+//    public BuildingBase(double leftUpX, double leftUpY, double rightDownX, double rightDownY, SimulationMap map, Direction direction,double width) {
+//        super(leftUpX, leftUpY, rightDownX, rightDownY, map);
+//        this.direction=direction;
+//        this.publicAreaWidth=width;
+////        this.taskTime = taskTime;
+//        initial();
+//    }
 
 
     public double getPrivateWallWidth(){

@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: info6205.virus.simulation.console.SimulationApplication
+

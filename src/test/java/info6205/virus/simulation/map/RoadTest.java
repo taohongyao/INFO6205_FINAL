@@ -4,6 +4,8 @@ import info6205.virus.simulation.entity.RoadArea;
 import info6205.virus.simulation.util.RoadAreaUtil;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RoadTest {
@@ -22,8 +24,14 @@ class RoadTest {
         roadArea4.linkRodaArea(roadArea5);
         roadArea5.linkRodaArea(roadArea6);
 
+
         try {
-            System.out.println(RoadAreaUtil.findPath(roadArea2,roadArea6));
+            System.out.println("BFS Path:");
+            List<RoadArea> path=RoadAreaUtil.findPath(roadArea2,roadArea6);
+            for (RoadArea roadArea1:path){
+                System.out.println(roadArea1);
+            }
+            assertTrue(path.size()!=0);
         } catch (Exception e) {
             e.printStackTrace();
         }

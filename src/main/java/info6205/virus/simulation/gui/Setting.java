@@ -4,10 +4,7 @@ import info6205.virus.simulation.console.SimulationApplication;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
+import java.awt.event.*;
 
 public class Setting {
     private JRadioButton offRadioButton;
@@ -17,22 +14,23 @@ public class Setting {
     private JTextField distanceText;
     private JTextField keepRateText;
     private JPanel mainPanel;
-    private JRadioButton cov19RadioButton;
-    private JRadioButton SARSRadioButton;
+    private JRadioButton cov19RB;
+    private JRadioButton sarsRB;
     private SimulationApplication simulationApplication;
+    private JFrame jFrame;
 
 
     public Setting(SimulationApplication simulationApplication) {
         this.simulationApplication = simulationApplication;
 
-        JFrame jFrame = new JFrame("Statistic");
+        jFrame = new JFrame("Statistic");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jFrame.setContentPane(mainPanel);
         jFrame.pack();
-        jFrame.setVisible(true);
+//        jFrame.setVisible(true);
         jFrame.setLocation(dim.width / 2 - jFrame.getSize().width / 2, dim.height / 2 - jFrame.getSize().height / 2);
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+        hide();
         applyButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -86,26 +84,35 @@ public class Setting {
         buttonGroup.add(offRadioButton);
 
 
-        cov19RadioButton.addItemListener(new ItemListener() {
+        cov19RB.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     simulationApplication.setVirusType(0);
+                    simulationApplication.reset();
                 }
             }
         });
 
-        SARSRadioButton.addItemListener(new ItemListener() {
+        sarsRB.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     simulationApplication.setVirusType(1);
+                    simulationApplication.reset();
                 }
             }
         });
         ButtonGroup buttonGroup2 = new ButtonGroup();
-        buttonGroup.add(cov19RadioButton);
-        buttonGroup.add(SARSRadioButton);
+        buttonGroup2.add(cov19RB);
+        buttonGroup2.add(sarsRB);
+
+    }
+    public void show(){
+        jFrame.setVisible(true);
+    }
+    public void hide(){
+        jFrame.setVisible(false);
     }
 
 

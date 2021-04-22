@@ -24,6 +24,8 @@ public class SimulationApplicationWindows {
     private SimulationApplication simulationApplication;
     private SimulationRender render;
     private static Logger logger = Logger.getLogger(SimulationApplication.class.getName());
+    private Setting settingWindow;
+    private Statistic statisticWindow;
 
 
     public JPanel getCanvas() {
@@ -41,6 +43,8 @@ public class SimulationApplicationWindows {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), xLTRealWorld, yLTRealWorld, zoom);
         logger.log(Level.INFO, "Start render.");
+        settingWindow=new Setting(simulationApplication);
+        statisticWindow=new Statistic();
 
         canvas.setBackground(Color.white);
         MouseEvent mouseEvent = new MouseEvent(render, canvas);
@@ -69,7 +73,7 @@ public class SimulationApplicationWindows {
         settingButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                new Setting(simulationApplication);
+                settingWindow.show();
             }
         });
         resetBtn.addMouseListener(new MouseAdapter() {
@@ -81,7 +85,7 @@ public class SimulationApplicationWindows {
         statisticButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                new Statistic();
+                statisticWindow.show();
             }
         });
     }
@@ -116,9 +120,10 @@ public class SimulationApplicationWindows {
         render.renderPeopleList(simulationApplication.getPeopleManger().getElders(), canvas.getGraphics());
         render.renderPeopleList(simulationApplication.getPeopleManger().getTeens(), canvas.getGraphics());
         render.drawCoordinate(canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
         PeopleManger peopleManger = simulationApplication.getPeopleManger();
         render.renderInfectedPanel(canvas.getWidth() - 500, 10, 500, peopleManger.getInfectedTeenCount(), peopleManger.getInfectedAdultCount(), peopleManger.getInfectedElderCount(), canvas.getGraphics());
+        render.renderMouseOperationInfo(40,10, canvas.getGraphics());
+        render.drawRecordLine(canvas.getGraphics());
     }
 
 

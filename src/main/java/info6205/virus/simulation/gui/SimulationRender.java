@@ -217,6 +217,19 @@ public class SimulationRender {
         g.drawString(String.format("Infected teen: %4d",teen),x+width*3,y);
     }
 
+    public void renderMouseOperationInfo(int x,int y,Graphics g){
+        int panelWidth=140;
+        int panelHigh=36;
+
+        g.setColor(new Color(27, 81, 216));
+        g.fillRoundRect(x,y,panelWidth,panelHigh,5,5);
+        g.setColor(new Color(255, 255, 255, 255));
+        y=y+13;
+        x=x+6;
+        g.drawString(String.format("Zoom+/-: Middle Wheel"),x,y);
+        g.drawString(String.format("Move   : Mouse Drag"),x,y+panelHigh/2);
+    }
+
 
     public void renderCrossLine(int x,int y,Graphics g){
         cleanLastCrossLine(g);

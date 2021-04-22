@@ -17,47 +17,53 @@ import java.util.List;
 
 
 public class Statistic {
-    private JPanel mainPanel;
     private JFrame jFrame;
-    private Timer timer;
+    private XYSeries series;
 
-    private XYSeries series = new XYSeries("R factor");
 
-    public synchronized void addData(List<List<Double>> data) {
-        for (List<Double> d : data) {
-            double x = d.get(0);
-            double y = d.get(1);
-            series.add(x, y);
+
+    public synchronized void refreshData() {
+//        data= new XYSeriesCollection(getData(DataRecord.getkFactor()));
+        series.clear();
+        synchronized (DataRecord.getkFactor()){
+            for (List<Double> d : DataRecord.getkFactor()) {
+                double x = d.get(0);
+                double y = d.get(1);
+                series.add(x, y);
+            }
         }
+        jFrame.repaint();
     }
 
-    public void refreshData() {
-        final XYSeriesCollection data = new XYSeriesCollection(series);
-        final JFreeChart chart = ChartFactory.createXYLineChart(
-                "R factor",
-                "X",
-                "Y",
+    public void show(){
+        jFrame.setVisible(true);
+        refreshData();
+    }
+    public void hide(){
+        jFrame.setVisible(false);
+    }
+
+    public Statistic() {
+        jFrame = new JFrame("Statistic");
+        series=new XYSeries("K factor");
+        XYSeriesCollection data= new XYSeriesCollection(series);
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "K factor",
+                "time",
+                "k",
                 data,
                 PlotOrientation.VERTICAL,
                 true,
                 true,
                 false
         );
-        addData(DataRecord.getkFactor());
         jFrame.setContentPane(new ChartPanel(chart));
-    }
-
-    public Statistic() {
-
-//        chartCanvas.setPreferredSize(new Dimension(500, 270));
-        jFrame = new JFrame("Statistic");
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        refreshData();
-//        jFrame.getContentPane().add(graph);
         jFrame.pack();
-        jFrame.setVisible(true);
-        jFrame.setLocation(dim.width / 2 - jFrame.getSize().width / 2, dim.height / 2 - jFrame.getSize().height / 2);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        jFrame.setLocation(dim.width / 2 - jFrame.getSize().width, dim.height / 2 - jFrame.getSize().height / 2);
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        refreshData();
+        hide();
 
     }
 
