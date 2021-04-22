@@ -150,7 +150,7 @@ public class SimulationApplication {
                     executorBase.roundSchedule();
                 }
                 //render windows
-                windows.render();
+//                windows.render();
             }
         }
     }

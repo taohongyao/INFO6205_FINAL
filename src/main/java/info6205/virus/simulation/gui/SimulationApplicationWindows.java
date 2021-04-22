@@ -94,6 +94,21 @@ public class SimulationApplicationWindows {
             }
         });
         refreshStaticGraph();
+
+        Thread renderThread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(16);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    render();
+                }
+            }
+        };
+        renderThread.start();
     }
 
     public void windowRender() {
