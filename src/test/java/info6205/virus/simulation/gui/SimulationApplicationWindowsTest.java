@@ -46,6 +46,7 @@ class SimulationApplicationWindowsTest {
         }
     }
 
+
     @Test
     public void applicationStart2(){
         SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);

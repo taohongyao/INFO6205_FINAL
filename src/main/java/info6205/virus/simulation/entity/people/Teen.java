@@ -5,6 +5,13 @@ import info6205.virus.simulation.entity.building.House;
 import info6205.virus.simulation.entity.building.School;
 
 public class Teen extends PeopleBase {
+
+    public Teen(int sleepTimeDuration, int eatingTimeDuration, double walkSpeed, double socialDistance, double keepSocialDistanceRate, House home, School school) {
+        super(sleepTimeDuration, eatingTimeDuration, walkSpeed, socialDistance, keepSocialDistanceRate, home);
+        this.school=school;
+        DailyStatusRefresh();
+    }
+
     public Teen(House house, School school) {
         super(house);
         this.school=school;

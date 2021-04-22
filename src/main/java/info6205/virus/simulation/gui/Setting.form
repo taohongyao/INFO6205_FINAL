@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="info6205.virus.simulation.gui.Setting">
   <grid id="27dc6" binding="mainPanel" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="285" height="258"/>
+      <xy x="20" y="20" width="386" height="260"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -173,23 +173,22 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
-      <component id="632ca" class="javax.swing.JRadioButton" binding="cov19RadioButton" default-binding="true">
+      <component id="aba6a" class="javax.swing.JRadioButton" binding="cov19RB">
         <constraints>
           <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <selected value="true"/>
-          <text value="Cov19"/>
+          <text value="RadioButton"/>
         </properties>
       </component>
-      <component id="f9e5b" class="javax.swing.JRadioButton" binding="SARSRadioButton" default-binding="true">
+      <component id="55585" class="javax.swing.JRadioButton" binding="sarsRB">
         <constraints>
           <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="SARS"/>
+          <text value="RadioButton"/>
         </properties>
       </component>
     </children>

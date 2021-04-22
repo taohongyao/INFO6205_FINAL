@@ -24,19 +24,19 @@ public class MoveInRoadTask extends MoveTask{
     protected boolean start=true;
 
     public MoveInRoadTask(double speed,BuildingBase des,AreaManger areaManger) {
-        super(0, speed, 0);
+//        super(0, speed, 0);
         this.buildingBase=des;
         this.areaManger=areaManger;
     }
 
     public MoveInRoadTask(double socialDistance, double speed, double keepSocialDistanceRate,BuildingBase des,AreaManger areaManger) {
-        super(socialDistance, speed, keepSocialDistanceRate);
+//        super(socialDistance, speed, keepSocialDistanceRate);
         this.buildingBase=des;
         this.areaManger=areaManger;
     }
 
     public MoveInRoadTask(double socialDistance, double speed, Long walkSeed, double keepSocialDistanceRate,BuildingBase des,AreaManger areaManger) {
-        super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
+//        super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
         this.buildingBase=des;
         this.areaManger=areaManger;
     }
@@ -159,7 +159,7 @@ public class MoveInRoadTask extends MoveTask{
                     continue;
                 }
                 // Simulate keeping social Distance Rate
-                if(getRandom().nextDouble()<getKeepSocialDistanceRate()){
+                if(getRandom().nextDouble()<peopleBase.getKeepSocialDistanceRate()){
                     if(GridElementUtil.isKeepSocialDistance(gridElement,peopleBase,peopleBase.getSocialDistance())){
                         peopleBase.moveToNextLocation(nextX,nextY);
                         break;
@@ -192,12 +192,12 @@ public class MoveInRoadTask extends MoveTask{
         Direction direction=currentArea.getDirectionOfRoadArea(des);
         // random walk when go to the destination
         if(getRandom().nextBoolean()){
-            xOffset=getSpeed()*2;
+            xOffset=peopleBase.getWalkSpeed()*2;
             if(getRandom().nextBoolean()){
                 xOffset=-xOffset;
             }
         }else {
-            yOffset=getSpeed()*2;
+            yOffset=peopleBase.getWalkSpeed()*2;
             if(getRandom().nextBoolean()){
                 yOffset=-yOffset;
             }
@@ -218,42 +218,42 @@ public class MoveInRoadTask extends MoveTask{
         // random walk when go to the destination
         switch (direction){
             case NORTH:
-                yOffset=getRandomSpeed();
+                yOffset=peopleBase.getRandomSpeed();
                 break;
             case SOUTH:
-                yOffset=-getRandomSpeed();
+                yOffset=-peopleBase.getRandomSpeed();
                 break;
             case WEST:
-                xOffset=-getRandomSpeed();
+                xOffset=-peopleBase.getRandomSpeed();
                 break;
             case EAST:
-                xOffset=getRandomSpeed();
+                xOffset=peopleBase.getRandomSpeed();
                 break;
             default:
         }
         double randomRate=0.5;
         if(direction==Direction.NORTH||direction==Direction.SOUTH){
             if(peopleBase.getLocation().getRealX()>=des.getRightDownX()) {
-                xOffset=-getRandomSpeed();
+                xOffset=-peopleBase.getRandomSpeed();
                 yOffset=0;
             }else if(peopleBase.getLocation().getRealX()<=des.getLeftUpX()){
-                xOffset=getRandomSpeed();
+                xOffset=peopleBase.getRandomSpeed();
                 yOffset=0;
             }else {
-                xOffset=speed*randomRate*getRandom().nextDouble();
+                xOffset=peopleBase.getWalkSpeed()*randomRate*getRandom().nextDouble();
                 if(getRandom().nextBoolean()){
                     xOffset=-xOffset;
                 }
             }
         }else {
             if(peopleBase.getLocation().getRealY()>=des.getLeftUpY()) {
-                yOffset=-getRandomSpeed();
+                yOffset=-peopleBase.getRandomSpeed();
                 xOffset=0;
             }else if(peopleBase.getLocation().getRealY()<=des.getRightDownY()){
-                yOffset=getRandomSpeed();
+                yOffset=peopleBase.getRandomSpeed();
                 xOffset=0;
             }else {
-                yOffset=speed*randomRate*getRandom().nextDouble();
+                yOffset=peopleBase.getWalkSpeed()*randomRate*getRandom().nextDouble();
                 if(getRandom().nextBoolean()){
                     yOffset=-yOffset;
                 }

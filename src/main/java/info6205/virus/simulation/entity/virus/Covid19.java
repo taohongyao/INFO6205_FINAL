@@ -13,8 +13,10 @@ import java.util.Set;
 
 public class Covid19 extends VirusBase {
 
-    public Covid19(double kFactor, double rFactor, int potentialDay, int aliveDay) {
-        super(kFactor, rFactor, potentialDay,aliveDay);
+    public Covid19(double infectRate,double deadRate,double vaccineEfficacy, int potentialDay, int aliveDay) {
+        super(infectRate, potentialDay,aliveDay);
+        this.vaccineEfficacy=deadRate;
+        this.deadRate=vaccineEfficacy;
     }
 
     @Override
@@ -25,13 +27,15 @@ public class Covid19 extends VirusBase {
     }
 
     public Covid19() {
-        super(10, 1,7+getRandom().nextInt(7),7);
+        super(0.1,7+getRandom().nextInt(7),7);
+        vaccineEfficacy=0.9;
+        deadRate=0.1;
     }
 
     @Override
     public VirusBase generate() {
 
-        return new Covid19();
+        return new Covid19(infectRate,deadRate,vaccineEfficacy,potentialDay,aliveDay);
     }
 
     @Override
@@ -47,8 +51,8 @@ public class Covid19 extends VirusBase {
                     if((!maskBase.isWare()||maskBase.getEffective()<1)
                             &&!people.isInfected(this)
                             &&!people.isVaccine(this)){
-                        int range=random.nextInt(1000000);
-                        if(range<rFactor*0.5){
+                        int range=random.nextInt(rateScala);
+                        if(range<infectRate*rateScala*0.5){
                             Covid19 covid19= (Covid19) this.generate();
                             covid19.infectPeople(peopleBase);
                             list.add(covid19);
@@ -67,8 +71,8 @@ public class Covid19 extends VirusBase {
                     if((maskBase==null||!maskBase.isWare()||maskBase.getEffective()<1)
                             &&!people.isInfected()
                             &&!people.isVaccine()){
-                        int range=random.nextInt(1000);
-                        if(range<rFactor){
+                        int range=random.nextInt(rateScala);
+                        if(range<infectRate*rateScala){
                             Covid19 covid19= (Covid19) this.generate();
                             covid19.infectPeople(people);
                             list.add(covid19);

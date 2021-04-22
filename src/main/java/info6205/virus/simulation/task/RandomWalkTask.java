@@ -16,30 +16,37 @@ public class RandomWalkTask extends MoveTask{
 
     protected int timeDuration;
     protected boolean infinity;
+    protected boolean keepDistance;
+    protected Long randomWalkSeed;
+
     private static Logger logger=Logger.getLogger(RandomWalkTask.class.getName());
     static {
         logger.setLevel(Level.INFO);
     }
 
-    public RandomWalkTask(double socialDistance, double speed, double keepSocialDistanceRate, int timeDuration) {
-        super(socialDistance, speed, keepSocialDistanceRate);
+    public RandomWalkTask(int timeDuration,boolean keepDistance) {
         this.timeDuration = timeDuration;
         this.infinity=false;
+        this.keepDistance=keepDistance;
     }
 
-    public RandomWalkTask(double socialDistance, double speed, double keepSocialDistanceRate) {
-        super(socialDistance, speed, keepSocialDistanceRate);
+    public RandomWalkTask(boolean keepDistance) {
+//        super(socialDistance, speed, keepSocialDistanceRate);
+        this.keepDistance=keepDistance;
         this.infinity=true;
     }
 
-    public RandomWalkTask(double socialDistance, double speed, Long walkSeed, double keepSocialDistanceRate, int timeDuration) {
-        super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
+    public RandomWalkTask(Long walkSeed,int timeDuration,boolean keepDistance) {
         this.timeDuration = timeDuration;
+        this.randomWalkSeed=walkSeed;
+        this.keepDistance=keepDistance;
     }
 
-    public RandomWalkTask(double socialDistance, double speed, Long walkSeed, double keepSocialDistanceRate) {
-        super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
+    public RandomWalkTask(Long walkSeed,boolean keepDistance) {
+//        super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
         this.infinity=true;
+        this.randomWalkSeed=walkSeed;
+        this.keepDistance=keepDistance;
     }
 
 
@@ -49,6 +56,7 @@ public class RandomWalkTask extends MoveTask{
         int maxFindNextLocationTimes=5;
 
         boolean notWayToWalk=false;
+        double distanceKeepRate=peopleBase.getKeepSocialDistanceRate();
 //        while (maxFindNextLocationTimes!=0){
         while (true){
             Double nextX = null,nextY=null;
@@ -74,7 +82,7 @@ public class RandomWalkTask extends MoveTask{
 
             if(gridElement.isWalkAble()){
                 // Simulate keeping social Distance Rate
-                if(getRandom().nextDouble()<getKeepSocialDistanceRate()){
+                if(getRandom().nextDouble()<distanceKeepRate&&keepDistance){
                     if(GridElementUtil.isKeepSocialDistance(gridElement,peopleBase,peopleBase.getSocialDistance())){
                         peopleBase.moveToNextLocation(nextX,nextY);
                         break;
@@ -86,7 +94,7 @@ public class RandomWalkTask extends MoveTask{
             }
             maxFindNextLocationTimes--;
             if(maxFindNextLocationTimes<-20){
-                setKeepSocialDistanceRate(getKeepSocialDistanceRate()*0.7);
+                distanceKeepRate=distanceKeepRate*0.7;
                 notWayToWalk=true;
             }
         }
@@ -106,12 +114,12 @@ public class RandomWalkTask extends MoveTask{
         double xOffset=0;
         double yOffset=0;
         if(getRandom().nextBoolean()){
-            xOffset=getSpeed()*2;
+            xOffset=peopleBase.getWalkSpeed()*2;
             if(getRandom().nextBoolean()){
                 xOffset=-xOffset;
             }
         }else {
-            yOffset=getSpeed()*2;
+            yOffset=peopleBase.getWalkSpeed()*2;
             if(getRandom().nextBoolean()){
                 yOffset=-yOffset;
             }
@@ -128,12 +136,12 @@ public class RandomWalkTask extends MoveTask{
         double xOffset=0;
         double yOffset=0;
         if(getRandom().nextBoolean()){
-            xOffset=getRandomSpeed();
+            xOffset=peopleBase.getRandomSpeed();
             if(getRandom().nextBoolean()){
                 xOffset=-xOffset;
             }
         }else {
-            yOffset=getRandomSpeed();
+            yOffset=peopleBase.getRandomSpeed();
             if(getRandom().nextBoolean()){
                 yOffset=-yOffset;
             }

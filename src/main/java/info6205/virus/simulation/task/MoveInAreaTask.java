@@ -20,7 +20,7 @@ public class MoveInAreaTask extends MoveTask{
     }
 
     public MoveInAreaTask(AreaBase areaBase,AreaManger areaManger) {
-        super(0, 0, 0);
+//        super(0, 0, 0);
         this.areaBase = areaBase;
         this.areaManger=areaManger;
     }

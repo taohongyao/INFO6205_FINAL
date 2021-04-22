@@ -41,10 +41,10 @@ class EntityGeneratorTest {
                 int high=5;
                 int width=10;
                 int roadWidth=1;
-                House house=new House(roadArea.getLeftUpX(),roadArea.getLeftUpY(),high,width,roadWidth,map, Direction.SOUTH);
+                House house=new House(roadArea.getLeftUpX(),roadArea.getLeftUpY(),high,width,roadWidth,map, Direction.SOUTH,60*60*3);
                 roadArea.linkBuilding(house);
                 houses.add(house);
-                house=new House(roadArea.getLeftUpX(),roadArea.getRightDownY(),high,width,roadWidth,map, Direction.NORTH);
+                house=new House(roadArea.getLeftUpX(),roadArea.getRightDownY(),high,width,roadWidth,map, Direction.NORTH,60*60*3);
                 roadArea.linkBuilding(house);
                 houses.add(house);
             }
