@@ -14,8 +14,8 @@ public class Setting {
     private JTextField distanceText;
     private JTextField keepRateText;
     private JPanel mainPanel;
-    private JRadioButton cov19RB;
-    private JRadioButton sarsRB;
+    private JRadioButton cov19RadioButton;
+    private JRadioButton SARSRadioButton;
     private SimulationApplication simulationApplication;
     private JFrame jFrame;
 
@@ -84,7 +84,7 @@ public class Setting {
         buttonGroup.add(offRadioButton);
 
 
-        cov19RB.addItemListener(new ItemListener() {
+        cov19RadioButton.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -94,7 +94,7 @@ public class Setting {
             }
         });
 
-        sarsRB.addItemListener(new ItemListener() {
+        SARSRadioButton.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -104,14 +104,16 @@ public class Setting {
             }
         });
         ButtonGroup buttonGroup2 = new ButtonGroup();
-        buttonGroup2.add(cov19RB);
-        buttonGroup2.add(sarsRB);
+        buttonGroup2.add(cov19RadioButton);
+        buttonGroup2.add(SARSRadioButton);
 
     }
-    public void show(){
+
+    public void show() {
         jFrame.setVisible(true);
     }
-    public void hide(){
+
+    public void hide() {
         jFrame.setVisible(false);
     }
 
@@ -281,7 +283,7 @@ public class Setting {
         mainPanel.add(spacer10, gbc);
         cov19RadioButton = new JRadioButton();
         cov19RadioButton.setSelected(true);
-        cov19RadioButton.setText("Cov19");
+        cov19RadioButton.setText("COV19");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 1;

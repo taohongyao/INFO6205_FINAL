@@ -173,22 +173,23 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
-      <component id="aba6a" class="javax.swing.JRadioButton" binding="cov19RB">
+      <component id="aba6a" class="javax.swing.JRadioButton" binding="cov19RadioButton">
         <constraints>
           <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="RadioButton"/>
+          <selected value="true"/>
+          <text value="COV19"/>
         </properties>
       </component>
-      <component id="55585" class="javax.swing.JRadioButton" binding="sarsRB">
+      <component id="55585" class="javax.swing.JRadioButton" binding="SARSRadioButton">
         <constraints>
           <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="RadioButton"/>
+          <text value="SARS"/>
         </properties>
       </component>
     </children>
