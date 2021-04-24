@@ -5,6 +5,7 @@ import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.entity.VirusBase;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class GridElement {
     private String connectedId;
@@ -17,6 +18,7 @@ public class GridElement {
     private SimulationMap map;
 
     private Map<String,PeopleBase> people;
+    private Map<String,PeopleBase> deadPeople;
     private List<AreaBase> areas;
     private List<VirusBase> virus;
 
@@ -26,8 +28,9 @@ public class GridElement {
         this.mapYIndex = mapYIndex;
         this.realX = realX;
         this.realY = realY;
-        walkAble=false;
+        this.walkAble=walkAble;
         people=new HashMap<>();
+        deadPeople=new HashMap<>();
         areas=new ArrayList<>();
         virus=new ArrayList<>();
         this.map=map;
@@ -41,6 +44,13 @@ public class GridElement {
     public void removePeople(PeopleBase peopleBase){
         people.remove(peopleBase.getId());
     }
+    public void addDeadPeople(PeopleBase peopleBase){
+        deadPeople.put(peopleBase.getId(),peopleBase);
+    }
+    public void removeDeadPeople(PeopleBase peopleBase){
+        deadPeople.remove(peopleBase.getId());
+    }
+
     public void bindArea(AreaBase areaBase){
         areas.add(areaBase);
     }
@@ -77,6 +87,8 @@ public class GridElement {
     public String getId() {
         return id;
     }
+
+
 
 
     public String getConnectedId() {
@@ -117,12 +129,14 @@ public class GridElement {
     }
 
     public boolean isArea(AreaBase base){
-        for(AreaBase areaBase:areas){
-            if(areaBase.equals(base)){
-                return true;
-            }
-        }
-        return false;
+        AreaBase finded=areas.stream().parallel().filter(areaBase -> areaBase.equals(base)).findFirst().orElse(null);
+        return finded==null?false:true;
+//        for(AreaBase areaBase:areas){
+//            if(areaBase.equals(base)){
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     public boolean havePeople(){
@@ -130,11 +144,17 @@ public class GridElement {
         return true;
     }
 
+
+    public int getPeopleSize(){
+        return people.size();
+    }
     public List<PeopleBase> getPeople() {
-        List<PeopleBase> peopleList=new ArrayList<>();
-        for(String id:people.keySet()){
-            peopleList.add(people.get(id));
-        }
+        List<PeopleBase> peopleList=new ArrayList<>(people.values());
+        return peopleList;
+    }
+
+    public List<PeopleBase> getDeadPeople() {
+        List<PeopleBase> peopleList=new ArrayList<>(deadPeople.values());
         return peopleList;
     }
 

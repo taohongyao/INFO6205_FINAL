@@ -23,23 +23,14 @@ public class MoveInRoadTask extends MoveTask{
     protected AreaManger areaManger;
     protected boolean start=true;
 
-    public MoveInRoadTask(double speed,BuildingBase des,AreaManger areaManger) {
-//        super(0, speed, 0);
-        this.buildingBase=des;
-        this.areaManger=areaManger;
-    }
 
-    public MoveInRoadTask(double socialDistance, double speed, double keepSocialDistanceRate,BuildingBase des,AreaManger areaManger) {
+    public MoveInRoadTask(BuildingBase des,AreaManger areaManger) {
 //        super(socialDistance, speed, keepSocialDistanceRate);
         this.buildingBase=des;
         this.areaManger=areaManger;
+        name="Go to "+des.getBuildingType();
     }
 
-    public MoveInRoadTask(double socialDistance, double speed, Long walkSeed, double keepSocialDistanceRate,BuildingBase des,AreaManger areaManger) {
-//        super(socialDistance, speed, walkSeed, keepSocialDistanceRate);
-        this.buildingBase=des;
-        this.areaManger=areaManger;
-    }
 
     public Queue<RoadArea> getPath() {
         return path;
@@ -49,16 +40,7 @@ public class MoveInRoadTask extends MoveTask{
         this.path = path;
     }
 
-    //    private BuildingBase getCurrentBuildingBase(PeopleBase peopleBase){
-//        GridElement gridElement=peopleBase.getLocation();
-//        for (AreaBase areaBase:gridElement.getAreas()){
-//            if(areaBase instanceof BuildingBase){
-//                return (BuildingBase) areaBase;
-//            }
-//        }
-//        return null;
-//    }
-//
+
     private RoadArea getPeopleRoadArea(PeopleBase peopleBase){
         GridElement currentLocation=peopleBase.getLocation();
         for(AreaBase areaBase:currentLocation.getAreas()){
@@ -70,18 +52,7 @@ public class MoveInRoadTask extends MoveTask{
     }
 
     public void findPath(PeopleBase peopleBase) throws Exception {
-//        BuildingBase buildingBase=getCurrentBuildingBase(peopleBase);
-//        if(buildingBase!=null){
-//            // leave to roadArea
-//            GridElement location=buildingBase.getPublicArea().getRandomGridElement();
-//            try {
-//                peopleBase.moveToNextLocation(location);
-//                buildingBase.decreaseSizeByOne();
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
+
         RoadArea src=getPeopleRoadArea(peopleBase);
         if(src!=null){
                 path= (Queue<RoadArea>) RoadAreaUtil.findPath(src,buildingBase.getPublicArea());
@@ -111,6 +82,21 @@ public class MoveInRoadTask extends MoveTask{
             }
             start=false;
         }
+        if(peopleBase.getWalkSpeed()>2)
+        {
+            RoadArea des=path.poll();
+            if(des==null){
+                finish();
+                return;
+            }
+            try {
+                peopleBase.moveToNextLocation(des.getRandomGridElement());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         timesInSameArea++;
         RoadArea des=path.peek();
         if(peopleBase.getLocation().isArea(des)){
@@ -188,6 +174,11 @@ public class MoveInRoadTask extends MoveTask{
     public void reScheduleTask(PeopleBase peopleBase){
         peopleBase.cleanAllTasks();
         peopleBase.addTask(new TasksGenerateTask(areaManger));
+    }
+
+    private boolean isInPath(GridElement location, Queue<RoadArea> path){
+        RoadArea currentArea=RoadAreaUtil.getRoadAreaByGrid(location);
+        return path.contains(currentArea);
     }
 
     private List<Double> avoidTooClose(PeopleBase peopleBase,RoadArea des,double speedScale){

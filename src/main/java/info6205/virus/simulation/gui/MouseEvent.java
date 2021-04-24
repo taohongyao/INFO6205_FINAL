@@ -24,6 +24,8 @@ public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotio
     @Override
     public void mousePressed(java.awt.event.MouseEvent e) {
         updateCross(e);
+        render.selectPeople(e.getX(),e.getY());
+        simulationApplicationWindows.refreshStaticTopGraph();
     }
 
     @Override
@@ -51,6 +53,8 @@ public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotio
         zoom=zoom+(rotation*0.003);
         render.setZoom(zoom);
         simulationApplicationWindows.refreshStaticGraph();
+        simulationApplicationWindows.refreshStaticTopGraph();
+
     }
 
     private void updateCross(java.awt.event.MouseEvent e){
@@ -58,7 +62,8 @@ public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotio
         int y = e.getY();
         pressX = x;
         pressY = y;
-        render.renderCrossLine(x, y, canvas.getGraphics());
+        render.updateCrossLineXY(x,y);
+//        render.renderCrossLine(x, y, canvas.getGraphics());
     }
 
     private void updateRenderXY(java.awt.event.MouseEvent e) {
@@ -69,6 +74,7 @@ public class MouseEvent implements MouseWheelListener, MouseListener, MouseMotio
         render.setxLeftTopRealWorld(render.getxLeftTopRealWorld() - render.convert2RealWorldLength(deltaX));
         render.setyLeftTopRealWorld(render.getyLeftTopRealWorld() + render.convert2RealWorldLength(deltaY));
         simulationApplicationWindows.refreshStaticGraph();
+        simulationApplicationWindows.refreshStaticTopGraph();
     }
 
     @Override

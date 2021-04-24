@@ -16,23 +16,29 @@ public class PeopleExecutor implements ExecutorBase{
 
     private void execute( List<PeopleBase> peopleBaseList){
         for (PeopleBase peopleBase:peopleBaseList){
-            TaskBase taskBase=peopleBase.getCurrentTask();
-            if(taskBase.isFinished()){
-                peopleBase.deleteCurrentTask();
+            if(peopleBase.isAlive()){
+                TaskBase taskBase=peopleBase.getCurrentTask();
+                if(taskBase.isFinished()){
+                    peopleBase.deleteCurrentTask();
+                }
+                taskBase=peopleBase.getCurrentTask();
+                taskBase.executeTask(peopleBase);
             }
-            taskBase=peopleBase.getCurrentTask();
-            taskBase.executeTask(peopleBase);
         }
     }
     private void dailyExecute(List<PeopleBase> peopleBaseList){
         for (PeopleBase peopleBase:peopleBaseList){
-            peopleBase.DailyStatusRefresh();
+            if(peopleBase.isAlive()){
+                peopleBase.DailyStatusRefresh();
+            }
         }
     }
 
     private void weekendsExecute(List<PeopleBase> peopleBaseList){
         for (PeopleBase peopleBase:peopleBaseList){
-            peopleBase.weekendDailyRefresh();
+            if(peopleBase.isAlive()){
+                peopleBase.weekendDailyRefresh();
+            }
         }
     }
 

@@ -7,15 +7,18 @@ import info6205.virus.simulation.entity.building.Office;
 public class Adult extends PeopleBase {
 
 
+
     public Adult(int sleepTimeDuration, int eatingTimeDuration, double walkSpeed, double socialDistance, double keepSocialDistanceRate, House home, Office office) {
         super(sleepTimeDuration, eatingTimeDuration, walkSpeed, socialDistance, keepSocialDistanceRate, home);
         this.office=office;
+        peopleType="Adult";
         DailyStatusRefresh();
     }
 
     public Adult(House house, Office office) {
         super(house);
         this.office=office;
+        peopleType="Adult";
         sleepTimeDuration=6*60*60;
         eatingTimeDuration=20*60;
         DailyStatusRefresh();

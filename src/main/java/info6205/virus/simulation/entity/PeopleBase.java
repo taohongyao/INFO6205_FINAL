@@ -12,11 +12,12 @@ import java.util.*;
 
 public abstract class PeopleBase {
     protected String id;
+    protected String peopleType;
     protected GridElement location;
     protected double x;
     protected double y;
-    protected List<VirusBase> virus;
-    protected List<VirusBase> vaccine;
+    protected Set<VirusBase> virus;
+    protected Set<VirusBase> vaccine;
     protected Queue<TaskBase> tasks;
     protected MaskBase maskBase;
     protected SimulationMap map;
@@ -43,13 +44,18 @@ public abstract class PeopleBase {
 
     public void initial(){
         id= UUID.randomUUID().toString();
-        virus =new ArrayList<>();
+        virus =new HashSet<>();
         tasks=new LinkedList<>();
-        vaccine =new ArrayList<>();
+        vaccine =new HashSet<>();
         location=home.getRandomWalkableGridElement();
         map=home.map;
         x=location.getRealX();
         y=location.getRealY();
+        try {
+            moveToNextLocation(location);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public PeopleBase(House home) {
@@ -77,9 +83,22 @@ public abstract class PeopleBase {
         needToSchool=false;
     }
 
+    public boolean isAlive() {
+        return isAlive;
+    }
+
     public double getRandomSpeed(){
         double speed=getWalkSpeed()*(1-0.3*random.nextDouble());
         return speed;
+    }
+
+
+    public String getPeopleType() {
+        return peopleType;
+    }
+
+    public void setPeopleType(String peopleType) {
+        this.peopleType = peopleType;
     }
 
     public double getSocialDistance() {
@@ -250,10 +269,13 @@ public abstract class PeopleBase {
 
     public void dead(){
         isAlive=false;
+        location.removePeople(this);
+        location.addDeadPeople(this);
     }
 
     public void revive(){
         isAlive=true;
+        moveToNextLocation(x,y);
     }
 
     public SimulationMap getMap() {
@@ -270,8 +292,8 @@ public abstract class PeopleBase {
     }
 
     //  Virus Operation----------------
-    public List<VirusBase> getVirus() {
-        return new ArrayList<>(virus);
+    public Set<VirusBase> getVirus() {
+        return virus;
     }
 
     public void infectVirus(VirusBase base){
@@ -279,14 +301,7 @@ public abstract class PeopleBase {
     }
 
     protected void removeVirus(VirusBase base){
-        int i=0;
-        for (VirusBase virusBase:virus){
-            if(virusBase.getId().equals(base.getId())){
-                virus.remove(i);
-                return;
-            }
-            i++;
-        }
+        virus.remove(base);
     }
     public boolean isVaccine(){
         for(VirusBase virusBase:vaccine){
@@ -305,13 +320,11 @@ public abstract class PeopleBase {
     }
 
     public boolean isInfected(){
-        for(VirusBase virusBase:virus){
-                return true;
-        }
-        return false;
+        return virus.size()!=0?true:false;
     }
 
     public boolean isInfected(Object classType){
+
         for(VirusBase virusBase:virus){
             if(classType.getClass().isInstance(virusBase)){
                 return true;

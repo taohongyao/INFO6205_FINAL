@@ -26,11 +26,19 @@ public class Statistic {
 //        data= new XYSeriesCollection(getData(DataRecord.getkFactor()));
         series.clear();
         synchronized (DataRecord.getkFactor()){
-            for (List<Double> d : DataRecord.getkFactor()) {
+            List<List<Double>> data=DataRecord.getkFactor();
+            int size= data.size();
+            int width=1;
+            if(size>1000){
+                width=size/1000;
+            }
+            for (int i =0;i<size;i+=width) {
+                List<Double> d=data.get(i);
                 double x = d.get(0);
                 double y = d.get(1);
                 series.add(x, y);
             }
+
         }
         jFrame.repaint();
     }
@@ -64,6 +72,23 @@ public class Statistic {
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         refreshData();
         hide();
+        Thread updateChart=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    try {
+                        Thread.sleep(1000);
+                        if(jFrame.isVisible()){
+                            refreshData();
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+        updateChart.start();
 
     }
 

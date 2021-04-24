@@ -7,6 +7,7 @@ import info6205.virus.simulation.map.SimulationMap;
 public class Hospital extends BuildingBase {
     public Hospital(double leftUpX, double leftUpY, double high, double width, double roadWidth, SimulationMap map, Direction direction,int taskDuration) {
         super(leftUpX, leftUpY, leftUpX+width, leftUpY-high, map,direction,roadWidth,taskDuration);
+        buildingType="Hospital";
 //        taskTime=60*60*3;
     }
 

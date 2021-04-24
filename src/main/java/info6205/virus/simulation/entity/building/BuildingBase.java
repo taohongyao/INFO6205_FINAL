@@ -9,6 +9,7 @@ import info6205.virus.simulation.map.SimulationMap;
 import java.util.List;
 
 public class BuildingBase extends AreaBase {
+    protected String buildingType;
     protected RoadArea publicArea;
     protected List<List<GridElement>> buildingPrivateArea;
     protected double publicAreaWidth;
@@ -67,6 +68,7 @@ public class BuildingBase extends AreaBase {
     }
 
     public void initial(){
+        buildingType="Building";
         leftUpXPublicArea=leftUpX;
         leftUpYPublicArea=leftUpY;
         rightDownXPublicArea=rightDownX;
@@ -114,6 +116,14 @@ public class BuildingBase extends AreaBase {
 //        initial();
 //    }
 
+
+    public String getBuildingType() {
+        return buildingType;
+    }
+
+    public void setBuildingType(String buildingType) {
+        this.buildingType = buildingType;
+    }
 
     public double getPrivateWallWidth(){
         return rightDownXBuildingWall-leftUpXBuildingWall;

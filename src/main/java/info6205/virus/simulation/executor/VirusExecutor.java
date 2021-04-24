@@ -17,14 +17,18 @@ public class VirusExecutor implements ExecutorBase {
     private void execute(List<VirusBase> list){
         List<VirusBase> copy=new ArrayList<>(list);
         for (VirusBase virusBase:copy){
-            List<VirusBase> newVirus=virusBase.findCarrierAndInfect();
-            virusManager.addVirus(newVirus);
+            if(virusBase.isAlive()){
+                List<VirusBase> newVirus=virusBase.findCarrierAndInfect();
+                virusManager.addVirus(newVirus);
+            }
         }
     }
     private void dailyExecute(List<VirusBase> list){
         for (VirusBase virusBase:list){
-            virusBase.minusPotentialDay();
-            virusBase.makeCarrierPeopleChangeState();
+            if(virusBase.isAlive()){
+                virusBase.minusPotentialDay();
+                virusBase.makeCarrierPeopleChangeState();
+            }
         }
     }
 

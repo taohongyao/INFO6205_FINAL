@@ -29,7 +29,7 @@ public class SimulationApplication {
     protected AreaManger areaManger;
     protected PeopleManger peopleManger;
     protected VirusManager virusManager;
-    protected SimulationApplicationWindows windows;
+//    protected SimulationApplicationWindows windows;
 
 
     protected int timeUnitADay;
@@ -41,6 +41,7 @@ public class SimulationApplication {
     protected int days;
     protected  double mapWidth;
     protected double mapHigh;
+
 
 
 
@@ -56,7 +57,7 @@ public class SimulationApplication {
         reset();
     }
 
-    public void reset(){
+    public synchronized void reset(){
         executorBaseList=new ArrayList<>();
         map=new SimulationMap(mapWidth,mapHigh);
 
@@ -124,36 +125,56 @@ public class SimulationApplication {
                 e.printStackTrace();
             }
             if(run){
-                worldTimeUnit++;
-                int dayTime=worldTimeUnit%timeUnitADay;
-                map.setCurrentTime(getTime());
 
-                // 3:00am refresh
-                if(dayTime==timeUnitADay*7.0/8){
-                    days++;
-                    for (ExecutorBase executorBase:executorBaseList){
-                        executorBase.daySchedule();
-                    }
-                    // 5 and 6 is weekends
-                    if(days%7>=5){
+                synchronized(this){
+                    worldTimeUnit++;
+                    int dayTime=worldTimeUnit%timeUnitADay;
+                    map.setCurrentTime(getTime());
+
+                    // 3:00am refresh
+                    if(dayTime==(int)(timeUnitADay*(7.0/8))){
+                        days++;
                         for (ExecutorBase executorBase:executorBaseList){
-                            executorBase.weekendsSchedule();
+                            executorBase.daySchedule();
+                        }
+                        // 5 and 6 is weekends
+                        if(days%7>=5){
+                            for (ExecutorBase executorBase:executorBaseList){
+                                executorBase.weekendsSchedule();
+                            }
                         }
                     }
+
+                    //Record data
+                    if(worldTimeUnit%10==0){
+                        DataRecord.addKFactorRecord(virusManager.getKFactor());
+                    }
+                    //Run virus and people move
+                    for (ExecutorBase executorBase:executorBaseList){
+                        executorBase.roundSchedule();
+                    }
                 }
-                //Record data
-                if(worldTimeUnit%10==0){
-                    DataRecord.addKFactorRecord(virusManager.getKFactor());
-                }
-                //Run virus and people move
-                for (ExecutorBase executorBase:executorBaseList){
-                    executorBase.roundSchedule();
-                }
-                //render windows
-//                windows.render();
             }
         }
     }
+
+    public void setSimulateSpeed(int simulateSpeed) {
+        this.simulateSpeed = simulateSpeed;
+        if(simulateSpeed>1000){
+            double timeZoom=1-((simulateSpeed-1000)*0.00048);
+            if(timeZoom<0.001) timeZoom=0.001;
+            BuildingBase.setTimeSpeedZoom(timeZoom);
+            PeopleBase.setTimeSpeedZoom(timeZoom);
+            timeUnitADay= (int) (initTimeUnitADay*timeZoom);
+            VirusBase.setDayActiveTimes(timeUnitADay);
+        }else {
+            BuildingBase.setTimeSpeedZoom(1);
+            PeopleBase.setTimeSpeedZoom(1);
+            timeUnitADay= initTimeUnitADay;
+            VirusBase.setDayActiveTimes(timeUnitADay);
+        }
+    }
+
 
     public int getDays() {
         return days;
@@ -174,12 +195,8 @@ public class SimulationApplication {
         run=false;
     }
 
-    public SimulationApplicationWindows getWindows() {
-        return windows;
-    }
-
-    public void setWindows(SimulationApplicationWindows windows) {
-        this.windows = windows;
+    public int getTimeUnitADay() {
+        return timeUnitADay;
     }
 
     public AreaManger getAreaManger() {
@@ -210,22 +227,7 @@ public class SimulationApplication {
         return simulateSpeed;
     }
 
-    public void setSimulateSpeed(int simulateSpeed) {
-        this.simulateSpeed = simulateSpeed;
-        if(simulateSpeed>1000){
-            double timeZoom=1-((simulateSpeed-1000)*0.0005);
-            if(timeZoom<0.1) timeZoom=0.1;
-            BuildingBase.setTimeSpeedZoom(timeZoom);
-            PeopleBase.setTimeSpeedZoom(timeZoom);
-            timeUnitADay= (int) (initTimeUnitADay*timeZoom);
-            VirusBase.setDayActiveTimes(timeUnitADay);
-        }else {
-            BuildingBase.setTimeSpeedZoom(1);
-            PeopleBase.setTimeSpeedZoom(1);
-            timeUnitADay= initTimeUnitADay;
-            VirusBase.setDayActiveTimes(timeUnitADay);
-        }
-    }
+
 
     public static void main(String[] args) {
         setLevel(Log.APP_LEVEL);
@@ -253,14 +255,12 @@ public class SimulationApplication {
 
         SimulationApplication simulationApplication=new SimulationApplication(timeUnitADay,mapWidth,mapHigh);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,xViewPointInRealWorld, yViewPointInRealWorld, viewZoom);
-        simulationApplication.setWindows(windows);
         simulationApplication.start();
     }
 
     public static void defaultStart(){
         SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-8, 50, 0.088);
-        simulationApplication.setWindows(windows);
         simulationApplication.start();
     }
 

@@ -1,6 +1,8 @@
 package info6205.virus.simulation.gui;
 
+import info6205.virus.simulation.console.SimulationApplication;
 import info6205.virus.simulation.entity.AreaBase;
+import info6205.virus.simulation.entity.MaskBase;
 import info6205.virus.simulation.entity.PeopleBase;
 import info6205.virus.simulation.entity.RoadArea;
 import info6205.virus.simulation.entity.building.*;
@@ -8,34 +10,37 @@ import info6205.virus.simulation.entity.people.Adult;
 import info6205.virus.simulation.entity.people.Elder;
 import info6205.virus.simulation.entity.people.Teen;
 import info6205.virus.simulation.logger.Log;
+import info6205.virus.simulation.map.GridElement;
+import info6205.virus.simulation.map.SimulationMap;
+import info6205.virus.simulation.task.RandomWalkTask;
+import info6205.virus.simulation.util.GridElementUtil;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 public class SimulationRender {
-    private int highCanvas;
-    private int widthCanvas;
+    private SimulationApplicationWindows simulationApplicationWindows;
     private double xLeftTopRealWorld;
     private double yLeftTopRealWorld;
     private double zoom;
     private Map<String,List<Integer>> record;
+    private PeopleBase selectedPeople;
+    private int selectedX;
+    private int selectedY;
+    private SimulationApplication simulationApplication;
 
     private static Logger logger=Logger.getLogger(SimulationRender.class.getName());
 
 
-    public SimulationRender(int highCanvas, int widthCanvas, double xLeftTopRealWorld, double yLeftTopRealWorld, double zoom) {
-        this.highCanvas = highCanvas;
-        this.widthCanvas = widthCanvas;
+    public SimulationRender(SimulationApplicationWindows simulationApplicationWindows, double xLeftTopRealWorld, double yLeftTopRealWorld, double zoom,SimulationApplication simulationApplication) {
+        this.simulationApplicationWindows = simulationApplicationWindows;
         this.xLeftTopRealWorld = xLeftTopRealWorld;
         this.yLeftTopRealWorld = yLeftTopRealWorld;
         this.zoom = zoom;
         record =new HashMap<>();
+        this.simulationApplication=simulationApplication;
     }
 
 
@@ -61,8 +66,8 @@ public class SimulationRender {
     }
 
     public void renderAreaBase(List<? extends AreaBase> areaBase,Graphics g){
-        double widthCanvasRealWorld = widthCanvas*zoom;
-        double highCanvasRealWorld = highCanvas*zoom;
+        double widthCanvasRealWorld = getWidthCanvas()*zoom;
+        double highCanvasRealWorld = getHighCanvas()*zoom;
         logger.log(Log.DEBUG,String.join(" ","Render areaBase:","x:"+xLeftTopRealWorld,",y:"+yLeftTopRealWorld,",widthCanvasRealWorld:"+widthCanvasRealWorld,",highCanvasRealWorld:"+highCanvasRealWorld));
         for (AreaBase item:areaBase){
             renderAreaBase(item,g,highCanvasRealWorld,widthCanvasRealWorld);
@@ -156,6 +161,18 @@ public class SimulationRender {
 //            g2d.fillRect(x,y-10,50,20);
 //        }
 //    }
+    public void updateCrossLineXY(int x,int y){
+        List<Integer> crossXY=record.get("CROSS");
+        if(crossXY!=null){
+            crossXY.set(0,x);
+            crossXY.set(1,y);
+        }else {
+            crossXY=new ArrayList<>();
+            crossXY.add(x);
+            crossXY.add(y);
+            record.put("CROSS",crossXY);
+        }
+    }
 
     public void drawRecordLine(Graphics g){
         synchronized (record){
@@ -164,26 +181,12 @@ public class SimulationRender {
                 int x=crossXY.get(0);
                 int y=crossXY.get(1);
                 Graphics2D g2d= (Graphics2D) g;
+                g2d.setStroke(new BasicStroke((float) 1));
                 g2d.setColor(new Color(158, 158, 158));
-                g2d.drawLine(0,y,widthCanvas,y);
-                g2d.drawLine(x,0,x,highCanvas);
+                g2d.drawLine(0,y,getWidthCanvas(),y);
+                g2d.drawLine(x,0,x,getHighCanvas());
                 g2d.drawString(String.format("(%d,%d)",(int)(convertCanvas2RealWorldX(x)),(int)convertCanvas2RealWorldY(y)),x,y);
             }
-        }
-    }
-    public void recordLastCrossLine(int x,int y){
-        List<Integer> crossXY=record.get("CROSS");
-        if(crossXY!=null){
-            synchronized (record){
-                crossXY.clear();
-                crossXY.add(x);
-                crossXY.add(y);
-            }
-        }else {
-            crossXY=new ArrayList<>();
-            crossXY.add(x);
-            crossXY.add(y);
-            record.put("CROSS",crossXY);
         }
     }
 
@@ -200,6 +203,8 @@ public class SimulationRender {
             return new Color(217, 26, 29);
         }
     }
+
+
 
     public void renderInfectedPanel(int x,int y,int panelWidth,int teen, int adult,int elder,Graphics g){
         int width=panelWidth/4;
@@ -231,17 +236,20 @@ public class SimulationRender {
     }
 
 
-    public void renderCrossLine(int x,int y,Graphics g){
-//        cleanLastCrossLine(g);
-        recordLastCrossLine(x,y);
-    }
+//    public void renderCrossLine(int x,int y,Graphics g){
+////        cleanLastCrossLine(g);
+//        recordLastCrossLine(x,y);
+//    }
 
     private void renderStringWithinBuilding(int x,int y,int High, String string,Graphics g){
         g.drawString(string,x,y);
     }
 
+
+
     public void renderPeopleList(List<?extends PeopleBase> list,Graphics g){
         for (PeopleBase peopleBase:list){
+
             if(peopleBase.isInfected()){
                 renderPeopleBase(peopleBase,g,new Color(245, 0, 87));
             }else if(peopleBase.isFeelSick()){
@@ -249,11 +257,11 @@ public class SimulationRender {
             }else if(peopleBase.isVaccine()){
                 renderPeopleBase(peopleBase,g,new Color(129, 199, 132));
             }else if(peopleBase instanceof Elder){
-                renderPeopleBase(peopleBase,g,new Color(93, 64, 55));
+                renderPeopleBase(peopleBase,g,new Color(0, 0, 0));
             }else if(peopleBase instanceof Adult){
-                renderPeopleBase(peopleBase,g,new Color(69, 90, 100));
+                renderPeopleBase(peopleBase,g,new Color(84, 110, 122));
             }else if(peopleBase instanceof Teen){
-                renderPeopleBase(peopleBase,g,new Color(117, 117, 117));
+                renderPeopleBase(peopleBase,g,new Color(255, 255, 255));
             }else {
                 renderPeopleBase(peopleBase,g,new Color(38, 50, 56));
             }
@@ -261,21 +269,50 @@ public class SimulationRender {
         }
     }
 
+    private double convertTimeToDouble(){
+        int time=simulationApplication.getWorldTimeUnit()%simulationApplication.getTimeUnitADay();
+        return (0.0+time)/simulationApplication.getTimeUnitADay();
+    }
+    private Color getColorWithDayTime(double daytime){
+        int R=219;
+        int G=245;
+        int B=255;
+        double rate=0;
+        if(daytime<=0.25){
+            // 6.00~12.00
+            rate=0.5+daytime*2;
+
+        }else if(daytime<0.75) {
+            // 12.00~ 24.00
+            rate=1.5-daytime*2;
+        }else {
+            // 24.00~ 6.00
+            rate=2*daytime-1.5;
+        }
+        R= (int) (R*rate);
+        G= (int) (G*rate);
+        B= (int) (B*rate);
+
+        return new Color(R, G, B, 255);
+    }
+
     public void cleanCanvas(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, widthCanvas, highCanvas);
+        double daytime=convertTimeToDouble();
+
+        g2d.setColor(getColorWithDayTime(daytime));
+        g2d.fillRect(0, 0, getWidthCanvas(), getHighCanvas());
     }
 
     public void drawCoordinate(Graphics g){
         int xLabel=10;
         int yLabel=10;
-        int canvasWidth=widthCanvas/xLabel;
-        int canvasHigh=highCanvas/yLabel;
-        double width=widthCanvas/(1.0*xLabel)*zoom;
-        double high=highCanvas/(1.0*yLabel)*zoom;
+        int canvasWidth=getWidthCanvas()/xLabel;
+        int canvasHigh=getHighCanvas()/yLabel;
+        double width=getWidthCanvas()/(1.0*xLabel)*zoom;
+        double high=getHighCanvas()/(1.0*yLabel)*zoom;
         for(int i=0;i<xLabel;i++){
-            g.drawString(String.format("|%.2f",xLeftTopRealWorld+i*width), (int) (i*canvasWidth),highCanvas-10);
+            g.drawString(String.format("|%.2f",xLeftTopRealWorld+i*width), (int) (i*canvasWidth),getHighCanvas()-10);
         }
         for(int i=0;i<yLabel;i++){
             g.drawString("-", 0,(int) (i*canvasHigh));
@@ -283,9 +320,12 @@ public class SimulationRender {
         }
     }
 
+
     private List<Integer> getRecord(PeopleBase peopleBase){
         return record.get(peopleBase.getId());
     }
+
+
 
     private void putRecord(PeopleBase peopleBase,int x, int y, int size){
         List<Integer> list=record.get(peopleBase.getId());
@@ -302,18 +342,71 @@ public class SimulationRender {
             record.put(peopleBase.getId(),list);
         }
     }
-    private void cleanLastRender(PeopleBase peopleBase,Graphics g){
-        List<Integer> list=getRecord(peopleBase);
-        if(list!=null){
-            int x=list.get(0);
-            int y=list.get(1);
-            int size=list.get(2);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(Color.WHITE);
-            g2d.fillOval(x,y,size,size);
+
+    public void selectPeople(int x,int y){
+        double xRealWorld=convertCanvas2RealWorldX(x);
+        double yRealWorld=convertCanvas2RealWorldY(y);
+        try {
+            GridElement gridElement=simulationApplication.getMap().getGridElimentByXY(xRealWorld,yRealWorld);
+            if (gridElement!=null){
+                Set<PeopleBase> set=GridElementUtil.getBFSAreaGridsPeople(gridElement,1.0);
+                Set<PeopleBase> set2=GridElementUtil.getBFSAreaGridsDeadPeople(gridElement,1.0);
+                set.addAll(set2);
+                if(set.size()>0){
+                    for(PeopleBase peopleBase:set){
+                        selectedPeople=peopleBase;
+                        selectedX=x;
+                        selectedY=y;
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        selectedPeople=null;
+    }
+
+    public void renderSelectedPeople(Graphics g){
+        if(selectedPeople!=null){
+            renderPeoplePanel(selectedPeople,selectedX,selectedY,g);
         }
     }
 
+    private void renderPeoplePanel(PeopleBase peopleBase,int xPanel,int yPanel, Graphics g){
+        Graphics2D g2d= (Graphics2D) g;
+        int x= xPanel+2;
+        int y= yPanel-10;
+        int width=160;
+        int high=120;
+        int arcWidth=10;
+        g2d.setColor(new Color(41, 67, 78 ,100));
+        g2d.fillRoundRect(x,y-high,width,high,arcWidth,arcWidth);
+        g2d.setColor(new Color(75, 99, 110));
+        g2d.drawRoundRect(x,y-high,width,high,arcWidth,arcWidth);
+
+        g2d.setColor(new Color(255, 255, 255));
+        int line=9;
+        int lineSpace=high/line;
+        int xSting=x+5;
+        int yString=y-high-2;
+
+        g2d.setFont(new Font("TimesRoman",Font.PLAIN,12));
+        g2d.drawString(String.format("Type: %s",peopleBase.getPeopleType()),xSting,yString+lineSpace);
+        g2d.drawString(String.format("Alive: %s",peopleBase.isAlive()),xSting,yString+lineSpace*2);
+        g2d.drawString(String.format("Mask: %s",peopleBase.getMaskBase()==null?"False":peopleBase.getMaskBase().isWare()),xSting,yString+3*lineSpace);
+        g2d.drawString(String.format("Task: %s",peopleBase.getCurrentTask().getName()),xSting,yString+4*lineSpace);
+        g2d.drawString(String.format("Infected: %s",peopleBase.isInfected()),xSting,yString+5*lineSpace);
+        g2d.drawString(String.format("Speed: %s",peopleBase.getWalkSpeed()),xSting,yString+6*lineSpace);
+        g2d.drawString(String.format("SocialDistance: %s",peopleBase.getSocialDistance()),xSting,yString+7*lineSpace);
+        g2d.drawString(String.format("SocialDistance Rate: %s",peopleBase.getKeepSocialDistanceRate()),xSting,yString+8*lineSpace);
+        if(peopleBase.getCurrentTask() instanceof RandomWalkTask){
+            RandomWalkTask randomWalkTask=(RandomWalkTask)peopleBase.getCurrentTask();
+            g2d.drawString(String.format("Keep SocialDistance: %s",randomWalkTask.isKeepDistance()),xSting,yString+9*lineSpace);
+        }else {
+            g2d.drawString(String.format("Keep SocialDistance: %s",true),xSting,yString+9*lineSpace);
+        }
+
+    }
 
     private void renderPeopleBase(PeopleBase peopleBase, Graphics g,Color color){
         // Fill Building Area
@@ -327,6 +420,23 @@ public class SimulationRender {
 //        g2d.setColor(new Color(38, 50, 56));
         g2d.setColor(color);
         g2d.fillOval(x,y,size,size);
+
+        if(!peopleBase.isAlive()){
+            int xRD=x+size;
+            int yRD=y+size;
+            g2d.setColor(Color.BLACK);
+            g2d.drawLine(x,y,xRD,yRD);
+            g2d.drawLine(x,yRD,xRD,y);
+        }
+
+        MaskBase maskBase=peopleBase.getMaskBase();
+        if(maskBase!=null&&maskBase.isWare()){
+            int maskSize=(int)(1/zoom);
+            int xMask=(int)(convert2CanvasX(peopleBase.getX())-maskSize/2.0);
+            int yMask= (int)(convert2CanvasY(peopleBase.getY())-maskSize/2.0);
+            g2d.setColor(new Color(8, 127, 35));
+            g2d.drawOval(xMask,yMask,maskSize,maskSize);
+        }
     }
 
     private void renderHouse(int x,int y,int buildingWidth,int buildingHigh,
@@ -477,20 +587,16 @@ public class SimulationRender {
 
 
     public int getHighCanvas() {
-        return highCanvas;
+        return simulationApplicationWindows.getCanvas().getHeight();
     }
 
-    public void setHighCanvas(int highCanvas) {
-        this.highCanvas = highCanvas;
-    }
+
 
     public int getWidthCanvas() {
-        return widthCanvas;
+        return simulationApplicationWindows.getCanvas().getWidth();
     }
 
-    public void setWidthCanvas(int widthCanvas) {
-        this.widthCanvas = widthCanvas;
-    }
+
 
     public double getyLeftTopRealWorld() {
         return yLeftTopRealWorld;

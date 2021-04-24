@@ -9,6 +9,7 @@ public class SleepTask extends TaskBase {
 
     public SleepTask(int sleepDuration) {
         this.timeToEnd = sleepDuration;
+        name="Sleeping";
     }
 
     @Override

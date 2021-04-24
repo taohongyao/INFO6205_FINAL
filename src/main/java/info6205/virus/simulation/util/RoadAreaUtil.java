@@ -1,41 +1,71 @@
 package info6205.virus.simulation.util;
 
 import info6205.virus.simulation.entity.AreaBase;
+import info6205.virus.simulation.entity.Direction;
 import info6205.virus.simulation.entity.RoadArea;
 import info6205.virus.simulation.map.GridElement;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RoadAreaUtil {
 
     public static List<RoadArea> findPath(RoadArea src, RoadArea des) throws Exception {
-        Queue<BFSNode> queue=new LinkedList<>();
-        Map<String,Boolean> travelFlag=new HashMap<>();
-        boolean finded=false;
-        BFSNode currentNode=new BFSNode(src,null);
 
-        queue.add(currentNode);
-        while (queue.size()!=0){
-            currentNode=queue.poll();
-            RoadArea currentRoadArea=currentNode.getRoadArea();
-            travelFlag.put(currentRoadArea.getId(),true);
+        Graph<RoadArea> roadAreaGraph=new Graph<>(){
+          @Override
+          public List<RoadArea> getAdjacentElement(RoadArea roadArea){
+              return roadArea.getAdjacentRoad();
+          }
+        };
+        return roadAreaGraph.findPathBFS(src,des);
+    }
 
-            if(currentRoadArea.equals(des)){
-                finded=true;
-                break;
-            }
-            for(RoadArea roadArea:currentRoadArea.getAdjacentRoad()){
-                if(travelFlag.get(roadArea.getId())==null){
-                    queue.add(new BFSNode(roadArea,currentNode));
+    public static List<RoadArea> compactPath(List<RoadArea> path){
+        LinkedList<RoadArea> copy=new LinkedList<>(path);
+        Direction direction=null;
+        int corner=0;
+        int sameLength=1;
+        for (int i=0;i<copy.size();i++){
+            if(i==copy.size()-1){
+                RoadArea currentArea=copy.get(i);
+                Direction currentDirection=currentArea.getDirectionOfRoadArea(copy.get(i-1));
+                if(currentDirection==direction){
+                    sameLength++;
+                    int sub_start=corner+1;
+                    int sub_end=corner+sameLength;
+                    if(sub_start<sub_end){
+                        copy.subList(sub_start,sub_end).clear();
+                        i=i-(sameLength-1);
+                    }
                 }
             }
+            if(i==1){
+                RoadArea currentArea=copy.get(i);
+                Direction currentDirection=currentArea.getDirectionOfRoadArea(copy.get(i-1));
+                direction=currentDirection;
+            }else if(i>1){
+                    RoadArea currentArea=copy.get(i);
+                    Direction currentDirection=currentArea.getDirectionOfRoadArea(copy.get(i-1));
+                    if(currentDirection!=direction){
+                        int sub_start=corner+1;
+                        int sub_end=corner+sameLength;
+                        if(sub_start<sub_end){
+                            copy.subList(sub_start,sub_end).clear();
+                            i=i-(sameLength-1);
+                        }
+                        corner=i-1;
+                        sameLength=1;
+                        direction=currentDirection;
+                        continue;
+                    }else {
+                        sameLength++;
+                    }
+                }
         }
-        if(finded==false) {
-            throw new Exception("Can't find path.");
-        }
-
-        return currentNode.getPath();
+        return  copy;
     }
+
 
     public static RoadArea getRoadAreaByGrid(GridElement gridElement){
         for (AreaBase areaBase:gridElement.getAreas()){
@@ -57,45 +87,9 @@ public class RoadAreaUtil {
     }
 
     public static int getRoadAreasPeople(RoadArea roadArea){
-        int count=0;
-        for(List<GridElement> list:roadArea.getArea()){
-            for (GridElement gridElement:list){
-                count+=gridElement.getPeople().size();
-            }
-        }
-        return count;
-
+        AtomicInteger count= new AtomicInteger();
+        roadArea.getArea().stream().parallel().forEach(i->i.stream().parallel().forEach(j-> count.addAndGet(j.getPeopleSize())));
+        return count.get();
     }
 
-
-}
-class BFSNode{
-    private RoadArea roadArea;
-    private List<RoadArea> path;
-
-    public BFSNode(RoadArea node,BFSNode parent) {
-        this.roadArea = node;
-        if(parent!=null){
-            path=new LinkedList<>(parent.getPath());
-        }else{
-            path=new LinkedList<>();
-        }
-        path.add(node);
-    }
-
-    public RoadArea getRoadArea() {
-        return roadArea;
-    }
-
-    public void setRoadArea(RoadArea roadArea) {
-        this.roadArea = roadArea;
-    }
-
-    public List<RoadArea> getPath() {
-        return path;
-    }
-
-    public void setPath(List<RoadArea> path) {
-        this.path = path;
-    }
 }

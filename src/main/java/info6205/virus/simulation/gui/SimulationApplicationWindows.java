@@ -3,13 +3,12 @@ package info6205.virus.simulation.gui;
 import info6205.virus.simulation.console.SimulationApplication;
 import info6205.virus.simulation.manager.PeopleManger;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,12 +24,15 @@ public class SimulationApplicationWindows {
     private JLabel timeWeekLabel;
     private JButton resetBtn;
     private JButton statisticButton;
+    private Setting settingWindow;
+    private Statistic statisticWindow;
+
     private SimulationApplication simulationApplication;
     private SimulationRender render;
     private static Logger logger = Logger.getLogger(SimulationApplication.class.getName());
-    private Setting settingWindow;
-    private Statistic statisticWindow;
     private BufferedImage im;
+    private BufferedImage imTopLevel;
+    private BufferedImage finalImg;
 
 
     public JPanel getCanvas() {
@@ -46,19 +48,44 @@ public class SimulationApplicationWindows {
         jFrame.setVisible(true);
         jFrame.setLocation(dim.width / 2 - jFrame.getSize().width / 2, dim.height / 2 - jFrame.getSize().height / 2);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.render = new SimulationRender(canvas.getHeight(), canvas.getWidth(), xLTRealWorld, yLTRealWorld, zoom);
-        logger.log(Level.INFO, "Start render.");
+        this.render = new SimulationRender(this, xLTRealWorld, yLTRealWorld, zoom, simulationApplication);
         settingWindow = new Setting(simulationApplication);
         statisticWindow = new Statistic();
 
-        canvas.setBackground(Color.white);
+
+        addListener();
+        refreshStaticGraph();
+
+        logger.log(Level.INFO, "Start render.");
+        Thread renderThread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    render();
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        renderThread.start();
+
+    }
+
+    public void addListener() {
         MouseEvent mouseEvent = new MouseEvent(render, canvas, this);
         canvas.addMouseListener(mouseEvent);
         canvas.addMouseMotionListener(mouseEvent);
         canvas.addMouseWheelListener(mouseEvent);
-//        mainPanel.addMouseListener(mouseEvent);
-//        jFrame.addMouseListener(mouseEvent);
-//        jFrame.addMouseMotionListener(mouseEvent);
+        canvas.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                refreshStaticGraph();
+            }
+        });
+
         runButton.addMouseListener(new MouseAdapter() {
             private boolean run = true;
 
@@ -93,22 +120,6 @@ public class SimulationApplicationWindows {
                 statisticWindow.show();
             }
         });
-        refreshStaticGraph();
-
-        Thread renderThread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(16);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    render();
-                }
-            }
-        };
-        renderThread.start();
     }
 
     public void windowRender() {
@@ -119,45 +130,64 @@ public class SimulationApplicationWindows {
     }
 
     public void render() {
-        // Render AreaBase
         windowRender();
-//        render.cleanCanvas(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getRoadAreas(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getHouses(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getHospitals(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getMalls(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getOffices(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getParks(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getRestaurants(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-//        render.renderAreaBase(simulationApplication.getAreaManger().getSchools(), canvas.getGraphics());
-//        render.drawRecordLine(canvas.getGraphics());
-        painStaticGraph(canvas);
-        render.renderPeopleList(simulationApplication.getPeopleManger().getAdults(), canvas.getGraphics());
-        render.renderPeopleList(simulationApplication.getPeopleManger().getElders(), canvas.getGraphics());
-        render.renderPeopleList(simulationApplication.getPeopleManger().getTeens(), canvas.getGraphics());
-
-        PeopleManger peopleManger = simulationApplication.getPeopleManger();
-        render.renderInfectedPanel(canvas.getWidth() - 500, 10, 500, peopleManger.getInfectedTeenCount(), peopleManger.getInfectedAdultCount(), peopleManger.getInfectedElderCount(), canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-        render.drawRecordLine(canvas.getGraphics());
-
+        if (simulationApplication.getWorldTimeUnit() % (simulationApplication.getTimeUnitADay() / 32) > 30) {
+            refreshStaticGraph();
+        }
+        paintFinalImg();
+        if (finalImg != null) {
+            canvas.getGraphics().drawImage(finalImg, 0, 0, canvas);
+        }
     }
 
-    private void painStaticGraph(JPanel canvas) {
-        canvas.getGraphics().drawImage(im, 0, 0, canvas);
+    private void paintFinalImg() {
+
+        Container c = canvas;
+        BufferedImage newImg = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = newImg.getGraphics();
+
+        if (im != null) {
+            g.drawImage(im, 0, 0, null);
+        }
+        render.renderPeopleList(simulationApplication.getPeopleManger().getAdults(), g);
+        render.renderPeopleList(simulationApplication.getPeopleManger().getElders(), g);
+        render.renderPeopleList(simulationApplication.getPeopleManger().getTeens(), g);
+
+        PeopleManger peopleManger = simulationApplication.getPeopleManger();
+        render.renderInfectedPanel(canvas.getWidth() - 500, 10, 500, peopleManger.getInfectedTeenCount(), peopleManger.getInfectedAdultCount(), peopleManger.getInfectedElderCount(), g);
+
+        if (imTopLevel != null) {
+            g.drawImage(imTopLevel, 0, 0, null);
+        }
+
+        this.finalImg = newImg;
+    }
+
+    private void paintStaticTopGraph(JPanel canvas) {
+        if (imTopLevel != null) {
+            canvas.getGraphics().drawImage(imTopLevel, 0, 0, canvas);
+        }
+    }
+
+    public void refreshStaticTopGraph() {
+        Container c = canvas;
+        BufferedImage newImg = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics canvas = newImg.getGraphics();
+        render.drawRecordLine(canvas);
+        render.renderSelectedPeople(canvas);
+        this.imTopLevel = newImg;
+    }
+
+    private void paintStaticGraph(JPanel canvas) {
+        if (im != null) {
+            canvas.getGraphics().drawImage(im, 0, 0, canvas);
+        }
     }
 
     public void refreshStaticGraph() {
         Container c = canvas;
-        im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics canvas = im.getGraphics();
+        BufferedImage newImg = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics canvas = newImg.getGraphics();
         render.cleanCanvas(canvas);
         render.renderAreaBase(simulationApplication.getAreaManger().getRoadAreas(), canvas);
         render.renderAreaBase(simulationApplication.getAreaManger().getHouses(), canvas);
@@ -169,7 +199,7 @@ public class SimulationApplicationWindows {
         render.renderAreaBase(simulationApplication.getAreaManger().getSchools(), canvas);
         render.drawCoordinate(canvas);
         render.renderMouseOperationInfo(40, 10, canvas);
-        canvas.dispose();
+        this.im = newImg;
     }
 
 

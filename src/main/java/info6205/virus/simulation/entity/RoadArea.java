@@ -83,7 +83,6 @@ public class RoadArea extends AreaBase{
                 return Direction.SOUTHWEST;
             }
         }
-
     }
 
     public List<RoadArea> getAdjacentRoad() {

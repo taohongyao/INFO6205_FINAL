@@ -9,9 +9,6 @@ import info6205.virus.simulation.map.SimulationMap;
 import info6205.virus.simulation.map.Time;
 
 public class TasksGenerateTask extends TaskBase{
-    private static double defaultSettingSpeed=0.1;
-    private static double socialDistance=3;
-    private static double socialDistanceKeepRate=0.8;
     private AreaManger areaManger;
 
     public TasksGenerateTask(AreaManger areaManger) {
@@ -128,9 +125,10 @@ public class TasksGenerateTask extends TaskBase{
 
     private void goHome(PeopleBase peopleBase, House house){
         try {
-            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, house,areaManger);
+            MoveInRoadTask moveInRoadTask=new MoveInRoadTask( house,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(house,areaManger);
-            RandomWalkTask randomWalkTask=new RandomWalkTask(house.getTaskTime(),false);
+            RandomWalkTask randomWalkTask=new RandomWalkTask(house.getTaskTime(),false,true);
+            randomWalkTask.setName("Relax at home");
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
             peopleBase.addTask(new LeaveBuildingTask());
@@ -146,7 +144,7 @@ public class TasksGenerateTask extends TaskBase{
 
 
     private void goToEating(PeopleBase peopleBase, Restaurant restaurant, EatingTask.Meal type){
-        MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, restaurant,areaManger);
+        MoveInRoadTask moveInRoadTask=new MoveInRoadTask(restaurant,areaManger);
         MoveInAreaTask moveInAreaTask=new MoveInAreaTask(restaurant,areaManger);
 
         peopleBase.addTask(new MaskOperationTask(true));
@@ -170,7 +168,7 @@ public class TasksGenerateTask extends TaskBase{
 
     private void goHomeAndSleep(PeopleBase peopleBase){
         SleepTask sleepTask=new SleepTask(peopleBase.getSleepTimeDuration());
-        MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, peopleBase.getHome(),areaManger);
+        MoveInRoadTask moveInRoadTask=new MoveInRoadTask(peopleBase.getHome(),areaManger);
         MoveInAreaTask moveInAreaTask=new MoveInAreaTask(peopleBase.getHome(),areaManger);
         peopleBase.addTask(new MaskOperationTask(true));
         peopleBase.addTask(new LeaveBuildingTask());
@@ -183,9 +181,10 @@ public class TasksGenerateTask extends TaskBase{
 
     private void goToSchool(PeopleBase peopleBase, School school){
         try {
-            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, school,areaManger);
+            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(school,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(school,areaManger);
-            RandomWalkTask randomWalkTask=new RandomWalkTask(school.getTaskTime(),false);
+            RandomWalkTask randomWalkTask=new RandomWalkTask(school.getTaskTime(),false,true);
+            randomWalkTask.setName("Studying");
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
             peopleBase.addTask(new LeaveBuildingTask());
@@ -202,15 +201,17 @@ public class TasksGenerateTask extends TaskBase{
 
     private void goToWork(PeopleBase peopleBase, BuildingBase buildingBase, Time workingTime){
         try {
-            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, buildingBase,areaManger);
+            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(buildingBase,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(buildingBase,areaManger);
-            RandomWalkTask randomWalkTask=new RandomWalkTask(buildingBase.getTaskTime(),false);
+            RandomWalkTask randomWalkTask=new RandomWalkTask(buildingBase.getTaskTime(),false,true);
+            randomWalkTask.setName("Working");
             // Task series
             peopleBase.addTask(new MaskOperationTask(true));
             peopleBase.addTask(new LeaveBuildingTask());
             peopleBase.addTask(moveInRoadTask);
             peopleBase.addTask(moveInAreaTask);
             peopleBase.addTask(randomWalkTask);
+            // finish work and set need2Work as false
             peopleBase.addTask(new UpdateWorkingStateTask(workingTime,false));
             peopleBase.addTask(new TasksGenerateTask(areaManger));
 
@@ -221,10 +222,10 @@ public class TasksGenerateTask extends TaskBase{
 
     private void goToPlace(PeopleBase peopleBase, BuildingBase buildingBase,boolean applySocialDistance){
         try {
-            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(defaultSettingSpeed,defaultSettingSpeed,socialDistanceKeepRate, buildingBase,areaManger);
+            MoveInRoadTask moveInRoadTask=new MoveInRoadTask(buildingBase,areaManger);
             MoveInAreaTask moveInAreaTask=new MoveInAreaTask(buildingBase,areaManger);
             RandomWalkTask randomWalkTask=null;
-            randomWalkTask=new RandomWalkTask(buildingBase.getTaskTime(),applySocialDistance);
+            randomWalkTask=new RandomWalkTask(buildingBase.getTaskTime(),applySocialDistance,true);
 
 
             // Task series
@@ -240,27 +241,4 @@ public class TasksGenerateTask extends TaskBase{
         }
     }
 
-    public static double getDefaultSettingSpeed() {
-        return defaultSettingSpeed;
-    }
-
-    public static void setDefaultSettingSpeed(double defaultSettingSpeed) {
-        TasksGenerateTask.defaultSettingSpeed = defaultSettingSpeed;
-    }
-
-    public static double getSocialDistance() {
-        return socialDistance;
-    }
-
-    public static void setSocialDistance(double socialDistance) {
-        TasksGenerateTask.socialDistance = socialDistance;
-    }
-
-    public static double getSocialDistanceKeepRate() {
-        return socialDistanceKeepRate;
-    }
-
-    public static void setSocialDistanceKeepRate(double socialDistanceKeepRate) {
-        TasksGenerateTask.socialDistanceKeepRate = socialDistanceKeepRate;
-    }
 }

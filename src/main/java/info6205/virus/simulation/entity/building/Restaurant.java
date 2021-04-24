@@ -9,6 +9,7 @@ public class Restaurant extends BuildingBase {
 
     public Restaurant(double leftUpX, double leftUpY, double high, double width, double roadWidth, SimulationMap map, Direction direction,int taskDuration) {
         super(leftUpX, leftUpY, leftUpX+width, leftUpY-high, map,direction,roadWidth,taskDuration);
+        buildingType="Restaurant";
 //        taskTime=60*60*3;
     }
 

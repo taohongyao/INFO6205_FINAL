@@ -7,6 +7,7 @@ public class Apartment extends House{
 
     public Apartment(double leftUpX, double leftUpY, double high, double width, double roadWidth, SimulationMap map, Direction direction,int taskDuration) {
         super(leftUpX, leftUpY, high, width,roadWidth, map,direction,taskDuration);
+        buildingType="Apartment";
 //        taskTime=60*60*1;
     }
 //    public Apartment(double leftUpX, double leftUpY, double high, double width, double roadWidth, SimulationMap map, Direction direction) {

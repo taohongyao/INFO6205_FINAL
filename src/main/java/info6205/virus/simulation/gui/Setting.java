@@ -5,10 +5,9 @@ import info6205.virus.simulation.console.SimulationApplication;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.event.MouseEvent;
 
 public class Setting {
-    private JRadioButton offRadioButton;
-    private JRadioButton onRadioButton;
     private JTextField speedText;
     private JButton applyButton;
     private JTextField distanceText;
@@ -16,6 +15,11 @@ public class Setting {
     private JPanel mainPanel;
     private JRadioButton cov19RadioButton;
     private JRadioButton SARSRadioButton;
+    private JButton offButton;
+    private JButton wareButton;
+    private JButton slow60Button;
+    private JButton middle600Button;
+    private JButton fast1000Button;
     private SimulationApplication simulationApplication;
     private JFrame jFrame;
 
@@ -33,7 +37,7 @@ public class Setting {
         hide();
         applyButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 int speed = 0;
                 try {
                     speed = Integer.parseInt(speedText.getText());
@@ -61,29 +65,6 @@ public class Setting {
             }
         });
 
-
-        offRadioButton.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    simulationApplication.getPeopleManger().removeAllMask();
-                }
-            }
-        });
-
-        onRadioButton.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    simulationApplication.getPeopleManger().setAllHaveMask();
-                }
-            }
-        });
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(onRadioButton);
-        buttonGroup.add(offRadioButton);
-
-
         cov19RadioButton.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -107,6 +88,46 @@ public class Setting {
         buttonGroup2.add(cov19RadioButton);
         buttonGroup2.add(SARSRadioButton);
 
+        wareButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                simulationApplication.getPeopleManger().setAllHaveMask();
+            }
+        });
+        offButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                simulationApplication.getPeopleManger().removeAllMask();
+            }
+        });
+        slow60Button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                simulationApplication.setSimulateSpeed(60);
+                speedText.setText("" + simulationApplication.getSimulateSpeed());
+            }
+        });
+
+        middle600Button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                simulationApplication.setSimulateSpeed(600);
+                speedText.setText("" + simulationApplication.getSimulateSpeed());
+            }
+        });
+        fast1000Button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                simulationApplication.setSimulateSpeed(3000);
+                speedText.setText("" + simulationApplication.getSimulateSpeed());
+            }
+        });
+        jFrame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                speedText.setText("" + simulationApplication.getSimulateSpeed());
+            }
+        });
     }
 
     public void show() {
@@ -155,21 +176,6 @@ public class Setting {
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(spacer2, gbc);
-        offRadioButton = new JRadioButton();
-        offRadioButton.setSelected(true);
-        offRadioButton.setText("off");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.WEST;
-        mainPanel.add(offRadioButton, gbc);
-        onRadioButton = new JRadioButton();
-        onRadioButton.setText("on");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.WEST;
-        mainPanel.add(onRadioButton, gbc);
         final JLabel label2 = new JLabel();
         label2.setText("Speed:");
         gbc = new GridBagConstraints();
@@ -182,7 +188,7 @@ public class Setting {
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 5;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(speedText, gbc);
@@ -190,30 +196,30 @@ public class Setting {
         applyButton.setText("Apply");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 11;
-        gbc.gridwidth = 4;
+        gbc.gridy = 12;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(applyButton, gbc);
         final JLabel label3 = new JLabel();
         label3.setText("Social Distance (m):");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
         mainPanel.add(label3, gbc);
         final JLabel label4 = new JLabel();
         label4.setText("Keep Social Distance Rate:");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.anchor = GridBagConstraints.WEST;
         mainPanel.add(label4, gbc);
         distanceText = new JTextField();
         distanceText.setText("2");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
-        gbc.gridy = 7;
-        gbc.gridwidth = 2;
+        gbc.gridy = 8;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(distanceText, gbc);
@@ -221,53 +227,47 @@ public class Setting {
         keepRateText.setText("0.8");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
-        gbc.gridy = 9;
-        gbc.gridwidth = 2;
+        gbc.gridy = 10;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(keepRateText, gbc);
         final JPanel spacer3 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 5;
-        gbc.gridy = 7;
+        gbc.gridx = 0;
+        gbc.gridy = 8;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(spacer3, gbc);
         final JPanel spacer4 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 13;
+        gbc.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(spacer4, gbc);
         final JPanel spacer5 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 12;
+        gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(spacer5, gbc);
         final JPanel spacer6 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 7;
         gbc.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(spacer6, gbc);
         final JPanel spacer7 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 9;
         gbc.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(spacer7, gbc);
         final JPanel spacer8 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy = 11;
         gbc.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(spacer8, gbc);
-        final JPanel spacer9 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 10;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        mainPanel.add(spacer9, gbc);
         final JLabel label5 = new JLabel();
         label5.setText("Virus:");
         gbc = new GridBagConstraints();
@@ -275,12 +275,12 @@ public class Setting {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         mainPanel.add(label5, gbc);
-        final JPanel spacer10 = new JPanel();
+        final JPanel spacer9 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.VERTICAL;
-        mainPanel.add(spacer10, gbc);
+        mainPanel.add(spacer9, gbc);
         cov19RadioButton = new JRadioButton();
         cov19RadioButton.setSelected(true);
         cov19RadioButton.setText("COV19");
@@ -289,13 +289,54 @@ public class Setting {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         mainPanel.add(cov19RadioButton, gbc);
+        offButton = new JButton();
+        offButton.setText("Remove");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(offButton, gbc);
+        slow60Button = new JButton();
+        slow60Button.setText("Slow(60)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(slow60Button, gbc);
+        middle600Button = new JButton();
+        middle600Button.setText("Middle(600)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(middle600Button, gbc);
+        fast1000Button = new JButton();
+        fast1000Button.setText("Fast(3000)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(fast1000Button, gbc);
+        wareButton = new JButton();
+        wareButton.setText("Ware");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(wareButton, gbc);
         SARSRadioButton = new JRadioButton();
         SARSRadioButton.setText("SARS");
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 5;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         mainPanel.add(SARSRadioButton, gbc);
+        final JPanel spacer10 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 6;
+        gbc.gridy = 8;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(spacer10, gbc);
     }
 
     /**

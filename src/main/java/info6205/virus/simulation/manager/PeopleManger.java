@@ -6,6 +6,7 @@ import info6205.virus.simulation.entity.people.Adult;
 import info6205.virus.simulation.entity.people.Elder;
 import info6205.virus.simulation.entity.people.Teen;
 import info6205.virus.simulation.entity.virus.Covid19;
+import info6205.virus.simulation.entity.virus.SARS;
 import info6205.virus.simulation.executor.ExecutorBase;
 import info6205.virus.simulation.executor.PeopleExecutor;
 
@@ -101,9 +102,10 @@ public class PeopleManger extends ManagerBase{
 
     public static int getInfectedCount(List<PeopleBase> peopleBases){
         int sum=0;
-        Covid19 a=new Covid19();
+        Covid19 cov=new Covid19();
+        SARS sars=new SARS();
         for(PeopleBase peopleBase:peopleBases){
-            if(peopleBase.isInfected(a)){
+            if(peopleBase.isInfected(cov)||peopleBase.isInfected(sars)){
                 sum++;
             }
         }

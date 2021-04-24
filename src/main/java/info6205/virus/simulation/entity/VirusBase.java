@@ -13,6 +13,7 @@ public abstract class VirusBase {
     protected int aliveDay;
     protected double vaccineEfficacy;
     protected double deadRate;
+    protected boolean isAlive;
     protected static Random random;
     static {
         random=new Random();
@@ -37,6 +38,7 @@ public abstract class VirusBase {
         infectRecord=new HashSet<>();
         contactRecord=new HashMap<>();
         aliveDay=0;
+        isAlive=true;
     }
 
     public static double getDayActiveTimes() {
@@ -121,8 +123,12 @@ public abstract class VirusBase {
         if(potentialDay!=0&& peopleBase!=null) potentialDay--;
     }
     public void minusAttachedVirusAliveDay(){
-        if(haveAttachPlace()&&timeToDeadDayWithoutPeople!=0){
-            timeToDeadDayWithoutPeople--;
+        if(haveAttachPlace()){
+            if(timeToDeadDayWithoutPeople>0){
+                timeToDeadDayWithoutPeople--;
+            }else {
+                isAlive=false;
+            }
         }
     }
     public void aliveDayIncreaseOneDay(){
@@ -177,13 +183,12 @@ public abstract class VirusBase {
         }
     }
 
+    public void virusDead(){
+        isAlive=false;
+    }
+
     public boolean isAlive(){
-        if(haveAttachPlace()&&timeToDeadDayWithoutPeople>0){
-            return true;
-        }else if(haveInfectedInPeopleBody()){
-            return true;
-        }
-        return false;
+        return isAlive;
     }
 
     public abstract void makeCarrierPeopleChangeState();

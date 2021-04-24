@@ -500,6 +500,9 @@ public class DemoGenerator extends EntityGenerator{
         //5->7
         linkRoadAreaBy2points(41,20,36,21);
         linkRoadAreaBy2points(41,20,36,19);
+
+        linkRoadAreaBy2points(41,30,36,31);
+        linkRoadAreaBy2points(41,30,36,29);
         //4->9
         linkRoadAreaBy2points(59,30,64,29);
         linkRoadAreaBy2points(59,30,64,31);

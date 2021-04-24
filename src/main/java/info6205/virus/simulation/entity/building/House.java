@@ -8,6 +8,7 @@ public class House extends BuildingBase {
 
     public House(double leftUpX, double leftUpY,double high,double width, double roadWidth,SimulationMap map, Direction direction,int taskDuration) {
         super(leftUpX, leftUpY, leftUpX+width, leftUpY-high, map,direction,roadWidth,taskDuration);
+        buildingType="House";
 //        taskTime=60*60*1;
     }
 

@@ -35,7 +35,7 @@ class SimulationApplicationWindowsTest {
         list.add(roadArea5);
         list.add(roadArea6);
 
-        SimulationRender simulationRender=new SimulationRender(canvas.getHeight(),canvas.getWidth(),0,map.getHigh(),0.05);
+        SimulationRender simulationRender=new SimulationRender(windows,0,map.getHigh(),0.05,simulationApplication);
         while (true){
             try {
                 Thread.sleep(500);
@@ -51,7 +51,7 @@ class SimulationApplicationWindowsTest {
     public void applicationStart2(){
         SimulationApplication simulationApplication=new SimulationApplication(60*60*24,100,80);
         SimulationApplicationWindows windows=new SimulationApplicationWindows(simulationApplication,-8, 50, 0.088);
-        simulationApplication.setWindows(windows);
+//        simulationApplication.setWindows(windows);
         simulationApplication.start();
 
     }

@@ -19,6 +19,7 @@ public class EatingTask extends TaskBase{
     public EatingTask(int eatingTime, Meal type) {
         timeToEnd=eatingTime;
         this.mealType=type;
+        name="Eating";
     }
     @Override
     public void executeTask(PeopleBase peopleBase) {

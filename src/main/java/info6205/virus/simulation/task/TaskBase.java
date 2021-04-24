@@ -17,6 +17,7 @@ public abstract class TaskBase {
 
     public TaskBase() {
         id= UUID.randomUUID().toString();
+        name="Basic Task";
     }
 
     public String getName() {

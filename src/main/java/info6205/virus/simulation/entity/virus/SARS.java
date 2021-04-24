@@ -19,10 +19,16 @@ public class SARS extends VirusBase{
         this.deadRate=vaccineEfficacy;
     }
 
+
     @Override
     public void makeCarrierPeopleChangeState() {
         if(peopleBase!=null&&isHaveSymptom()){
             peopleBase.setFeelSick(true);
+        }
+        int range=getRandom().nextInt(rateScala);
+        if(range<rateScala*deadRate){
+            peopleBase.dead();
+            virusDead();
         }
     }
 
@@ -40,42 +46,40 @@ public class SARS extends VirusBase{
     @Override
     public List<VirusBase> findCarrierAndInfect() {
         List<VirusBase> list=new ArrayList<>();
-        if(this.isAlive()) {
-            if(haveAttachPlace()){
-                GridElement currentPosition=getLocation();
-                Set<PeopleBase> peopleBases= GridElementUtil.getBFSAreaGridsPeople(currentPosition,1.0);
-                for (PeopleBase people:peopleBases){
-                    MaskBase maskBase=people.getMaskBase();
-                    recordContactPeople(people);
-                    if((!maskBase.isWare()||maskBase.getEffective()<1)
-                            &&!people.isInfected(this)
-                            &&!people.isVaccine(this)){
-                        int range=random.nextInt(rateScala);
-                        if(range<infectRate*rateScala*0.5/dayActiveTimes){
-                            SARS sars= (SARS) this.generate();
-                            sars.infectPeople(peopleBase);
-                            list.add(sars);
-                        }
+        if(haveAttachPlace()){
+            GridElement currentPosition=getLocation();
+            Set<PeopleBase> peopleBases= GridElementUtil.getBFSAreaGridsPeople(currentPosition,1.0);
+            for (PeopleBase people:peopleBases){
+                MaskBase maskBase=people.getMaskBase();
+                recordContactPeople(people);
+                if((!maskBase.isWare()||maskBase.getEffective()<1)
+                        &&!people.isInfected(this)
+                        &&!people.isVaccine(this)){
+                    int range=random.nextInt(rateScala);
+                    if(range<infectRate*rateScala*0.5/dayActiveTimes){
+                        SARS sars= (SARS) this.generate();
+                        sars.infectPeople(peopleBase);
+                        list.add(sars);
                     }
                 }
-            }else {
-                PeopleBase peopleBase=getPeopleBase();
-                GridElement currentPosition=peopleBase.getLocation();
-                //find 5 meter people
-                Set<PeopleBase> peopleBases= GridElementUtil.getBFSAreaGridsPeople(currentPosition,3.0);
-                peopleBases.remove(this.peopleBase);
-                for (PeopleBase people:peopleBases){
-                    MaskBase maskBase=people.getMaskBase();
-                    recordContactPeople(people);
-                    if((maskBase==null||!maskBase.isWare()||maskBase.getEffective()<1)
-                            &&!people.isInfected()
-                            &&!people.isVaccine()){
-                        int range=random.nextInt(rateScala);
-                        if(range<infectRate*rateScala/dayActiveTimes){
-                            SARS sars= (SARS) this.generate();
-                            sars.infectPeople(people);
-                            list.add(sars);
-                        }
+            }
+        }else {
+            PeopleBase peopleBase=getPeopleBase();
+            GridElement currentPosition=peopleBase.getLocation();
+            //find 5 meter people
+            Set<PeopleBase> peopleBases= GridElementUtil.getBFSAreaGridsPeople(currentPosition,3.0);
+            peopleBases.remove(this.peopleBase);
+            for (PeopleBase people:peopleBases){
+                MaskBase maskBase=people.getMaskBase();
+                recordContactPeople(people);
+                if((maskBase==null||!maskBase.isWare()||maskBase.getEffective()<1)
+                        &&!people.isInfected()
+                        &&!people.isVaccine()){
+                    int range=random.nextInt(rateScala);
+                    if(range<infectRate*rateScala/dayActiveTimes){
+                        SARS sars= (SARS) this.generate();
+                        sars.infectPeople(people);
+                        list.add(sars);
                     }
                 }
             }
